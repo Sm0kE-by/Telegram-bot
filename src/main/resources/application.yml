@@ -1,0 +1,12 @@
+telegram:
+  botName: devmark_ru_test_bot
+  token: 7071822713:AAHmSIKAAZLTww3mwN8m1wQ4y-geKZ9i1d0
+
+attributesBot:
+  youtube: (https://www.youtube.com/)
+  tiktok: (https://www.tiktok.com/explore)
+  instagram: (https://www.instagram.com/)
+  telegraf: (https://telegra.ph/)
+
+chatId:
+  group: -1002115452577
