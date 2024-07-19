@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 @Component
 class PostCommand : BotCommand(CommandName.POST.text, "") {
 
+    //
     override fun execute(absSender: AbsSender, user: User, chat: Chat, arguments: Array<out String>) {
 
         val callback = HandlerName.CREATE_POST_BY_CRYPTO.text
