@@ -20,7 +20,7 @@ class DevmarcBot(
     @Value("\${telegram.botName}")
     private val botName: String = ""
     private lateinit var handlerMapping: Map<String, MyCallbackHandlerBot>
-    private lateinit var message: String
+    private  var message: String = ""
 
     init {
         registerAll(*commands.toTypedArray())
@@ -30,6 +30,7 @@ class DevmarcBot(
     override fun getBotUsername(): String = botName
 
     override fun processNonCommandUpdate(update: Update) {
+
         if (update.hasMessage()) {
             val chatId = update.message.chatId.toString()
             if (update.message.hasText()) {
@@ -55,6 +56,7 @@ class DevmarcBot(
          * первого внутрь этого обработчика.
          */
         else if (update.hasCallbackQuery()) {
+
             val callbackQuery = update.callbackQuery
             val callbackData = callbackQuery.data
 

@@ -2,10 +2,7 @@ package com.example.demo_bot.util
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow
 
 /**
  * Ф-ия в которой мы создаём объект SendMessage с указанием текста и chatId.
@@ -17,8 +14,12 @@ fun createMessage(chatId: String, text: String) =
         .apply { enableMarkdown(true) }
         .apply { disableWebPagePreview() }
 
-fun createPost(chatId: String, text: String, inlineButtons: List<List<Pair<String, String>>>) =
-    createMessage(chatId, "arguments.toString()").apply {
+
+
+
+
+fun createDialogMenu(chatId: String, text: String, inlineButtons: List<List<Pair<String, String>>>) =
+    createMessage(chatId, text).apply {
         replyMarkup = getInlineKeyboard(inlineButtons)
     }
 

@@ -7,7 +7,12 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 
 interface MyCallbackHandlerBot {
 
-    val name:HandlerName
+    val name: HandlerName
 
-    fun myProcessCallbackData(absSender: AbsSender, callbackQuery: CallbackQuery, arguments: List<String>, message: String)
+    fun myProcessCallbackData(
+        absSender: AbsSender,
+        callbackQuery: CallbackQuery,
+        arguments: List<String>,
+        message: String
+    )
 }

@@ -3,10 +3,18 @@ telegram:
   token: 7071822713:AAHmSIKAAZLTww3mwN8m1wQ4y-geKZ9i1d0
 
 attributesBot:
+  youtube_attribute: YouTube
+  tiktok_attribute: TikTok
+  instagram_attribute: Instagram
+  telegraph_attribute: Telegraph
   youtube: (https://www.youtube.com/)
   tiktok: (https://www.tiktok.com/explore)
   instagram: (https://www.instagram.com/)
-  telegraf: (https://telegra.ph/)
+  telegraph: (https://telegra.ph/)
 
 chatId:
   group: -1002115452577
+
+head_message:
+  name: SKcrypto
+  link: (https://t.me/DefiSKcrypto)

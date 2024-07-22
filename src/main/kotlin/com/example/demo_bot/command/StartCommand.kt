@@ -1,9 +1,8 @@
 package com.example.demo_bot.command
 
-import com.example.demo_bot.learn_bot.SumCommand
-import com.example.demo_bot.learn_bot.createMessageWithSimpleButtons
 import com.example.demo_bot.model.CommandName
-import com.example.demo_bot.util.createMessage
+import com.example.demo_bot.model.HandlerName
+import com.example.demo_bot.util.createDialogMenu
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand
 import org.telegram.telegrambots.meta.api.objects.Chat
@@ -14,12 +13,17 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 class StartCommand : BotCommand(CommandName.START.text, "") {
 
     override fun execute(absSender: AbsSender, user: User, chat: Chat, arguments: Array<out String>) {
+
+        val callbackCreatePost = HandlerName.CREATE_POST_MENU.text
+        val callbackChangeAttributes = HandlerName.CHANGE_ATTRIBUTES.text
+
         absSender.execute(
-            createMessageWithSimpleButtons(
+            createDialogMenu(
                 chat.id.toString(),
-                "Добро пожаловать! Выбирите одны из функций!",
+                "Добро пожаловать в нашего бота! Выбирите одны из функций!",
                 listOf(
-                    listOf("Создать пост", "Изменить атрибуты"),
+                    listOf("$callbackCreatePost|create_post" to "Создать пост"),
+                    listOf("$callbackChangeAttributes|change_attributes" to "Изменить атрибуты"),
                 )
             )
         )
