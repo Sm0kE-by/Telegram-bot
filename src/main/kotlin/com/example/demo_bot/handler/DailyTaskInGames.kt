@@ -5,7 +5,7 @@ import com.example.demo_bot.util.createDialogMenu
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
 
-class DailyTaskInGames {
+class DailyTaskInGames : MyCallbackHandlerBot {
 
     override val name: HandlerName = HandlerName.CREATE_POST_MENU
 
@@ -36,5 +36,5 @@ class DailyTaskInGames {
             )
         )
 
-
+    }
 }

@@ -3,8 +3,10 @@ package com.example.demo_bot.handler
 import com.example.demo_bot.learn_bot.createMessage
 import com.example.demo_bot.learn_bot.getInlineKeyboard
 import com.example.demo_bot.model.BotAttributes
+import com.example.demo_bot.model.CommandName
 import com.example.demo_bot.model.HandlerName
 import com.example.demo_bot.model.HashtagModel
+import com.example.demo_bot.util.createDialogMenu
 import com.example.demo_bot.util.getHashTagUtilCreatePost
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
@@ -18,6 +20,8 @@ class CreatePostHandlerMy(private val botAttributes: BotAttributes) : MyCallback
     override val name: HandlerName = HandlerName.CREATE_NEW_POST_BY_CRYPTO
     lateinit var list: List<String>
 
+    val callbackNext = HandlerName.CREATE_NEW_POST_BY_CRYPTO.text
+    val callbackBack = CommandName.START.text
 
     override fun myProcessCallbackData(
         absSender: AbsSender, callbackQuery: CallbackQuery, arguments: List<String>, message: String
@@ -36,14 +40,32 @@ class CreatePostHandlerMy(private val botAttributes: BotAttributes) : MyCallback
             )
         )
 
-        if (arguments.first() == "back") {
-            absSender.execute(createMessage(chatId, "Абсолютно верно!"))
+//        if (arguments.first() == "back") {
+//            absSender.execute(createMessage(chatId, "Абсолютно верно!"))
+//        } else
+        if (message.isEmpty()) {
+            absSender.execute(createMessage(chatId, """
+                
+                Вы не ввели сообщение!!!
+                
+                """.trimIndent() ))
+            absSender.execute(
+                createDialogMenu(
+                    chatId,
+                    "Введите текс сообщения",
+                    listOf(
+                        listOf("$callbackNext|next" to "Далее"),
+                        listOf("$callbackBack|back" to "Назад"),
+                    )
+                )
+            )
         } else {
             list = getHashTagUtilCreatePost(HandlerName.CREATE_NEW_POST_BY_CRYPTO)
 
             absSender.execute(
                 createMessage(
-                    chatId,
+                    chatId = chatId,
+                    text =
                     """                    
                     [${botAttributes.attributes.headName}]${botAttributes.attributes.headLink}
                     
