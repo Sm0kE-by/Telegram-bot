@@ -20,8 +20,9 @@ class CreatePostHandlerMy(private val botAttributes: BotAttributes) : MyCallback
     override val name: HandlerName = HandlerName.CREATE_NEW_POST_BY_CRYPTO
     lateinit var list: List<String>
 
+    val callbackSend = HandlerName.SEND_MESSAGE.text
     val callbackNext = HandlerName.CREATE_NEW_POST_BY_CRYPTO.text
-    val callbackBack = CommandName.START.text
+    val callbackBack = HandlerName.CREATE_MESSAGE.text
 
     override fun myProcessCallbackData(
         absSender: AbsSender, callbackQuery: CallbackQuery, arguments: List<String>, message: String
@@ -63,7 +64,7 @@ class CreatePostHandlerMy(private val botAttributes: BotAttributes) : MyCallback
             list = getHashTagUtilCreatePost(HandlerName.CREATE_NEW_POST_BY_CRYPTO)
 
             absSender.execute(
-                createMessage(
+                createDialogMenu(
                     chatId = chatId,
                     text =
                     """                    
@@ -74,12 +75,13 @@ class CreatePostHandlerMy(private val botAttributes: BotAttributes) : MyCallback
                     $list
                   
                     [${botAttributes.attributes.youtubeAttributes}]${botAttributes.attributes.youtube} | [${botAttributes.attributes.tiktokAttributes}]${botAttributes.attributes.tiktok} | [${botAttributes.attributes.instagramAttributes}]${botAttributes.attributes.instagram} | [${botAttributes.attributes.telegraphAttributes}]${botAttributes.attributes.telegraph}                                      
-                """.trimIndent()
+                """.trimIndent(),
+                   inlineButtons =  listOf(
+                       listOf("$callbackSend|send" to "Отправить пост"),
+                        listOf("$callbackBack|back" to "Назад"),
+                    )
                 )
             )
         }
-
-
     }
-
 }

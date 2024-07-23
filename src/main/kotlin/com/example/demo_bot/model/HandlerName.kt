@@ -9,4 +9,5 @@ enum class HandlerName(val text: String) {
     DAILY_TASKS_IN_GAMES("daily_tasks_in_games"),
     CHANGE_ATTRIBUTES("change_attributes"),
     CREATE_MESSAGE("create_message"),
+    SEND_MESSAGE("send_message"),
 }

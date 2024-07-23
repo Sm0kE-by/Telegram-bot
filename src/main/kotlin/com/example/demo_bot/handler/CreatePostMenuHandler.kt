@@ -29,7 +29,7 @@ class CreatePostMenuHandler: MyCallbackHandlerBot {
         absSender.execute(
             createDialogMenu(
                 chatId,
-                "Выберите действие\n",
+                "Выберите действие",
                 listOf(
                     listOf("$callbackCreateNewPost|create_new_post" to "Создать пост про крипту"),
                     listOf("$callbackInviteNewGame|invite_new_game" to "Приглошение в новую игру"),
