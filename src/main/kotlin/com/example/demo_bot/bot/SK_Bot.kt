@@ -2,6 +2,7 @@ package com.example.demo_bot.bot
 
 import com.example.demo_bot.handler.MyCallbackHandlerBot
 import com.example.demo_bot.learn_bot.createMessage
+import com.example.demo_bot.model.HandlerName
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot
@@ -20,7 +21,7 @@ class SK_Bot(
     @Value("\${telegram.botName}")
     private val botName: String = ""
     private lateinit var handlerMapping: Map<String, MyCallbackHandlerBot>
-    private  var message: String = ""
+    private var message: String = ""
 
     init {
         registerAll(*commands.toTypedArray())
@@ -59,6 +60,7 @@ class SK_Bot(
 
             val callbackQuery = update.callbackQuery
             val callbackData = callbackQuery.data
+            var messageToSens = ""
 
             val callbackQueryId = callbackQuery.id
             execute(AnswerCallbackQuery(callbackQueryId))
@@ -66,15 +68,29 @@ class SK_Bot(
             val callbackArguments = callbackData.split("|")
             val callbackHandlerName = callbackArguments.first()
 
-            // message = update.message.text
+            if (callbackHandlerName == HandlerName.SEND_MESSAGE.text){
+                messageToSens = callbackQuery.message.text
+            }
 
-            handlerMapping.getValue(callbackHandlerName)
-                .myProcessCallbackData(
-                    absSender = this,
-                    callbackQuery = callbackQuery,
-                    arguments = callbackArguments.subList(1, callbackArguments.size),
-                    message = message
-                )
+
+//            createMessage(callbackQueryId, messageToSens)
+            if (messageToSens=="") {
+                handlerMapping.getValue(callbackHandlerName)
+                    .myProcessCallbackData(
+                        absSender = this,
+                        callbackQuery = callbackQuery,
+                        arguments = callbackArguments.subList(1, callbackArguments.size),
+                        message = message
+                    )
+            } else{
+                handlerMapping.getValue(callbackHandlerName)
+                    .myProcessCallbackData(
+                        absSender = this,
+                        callbackQuery = callbackQuery,
+                        arguments = callbackArguments.subList(1, callbackArguments.size),
+                        message = messageToSens
+                    )
+            }
         }
     }
 
