@@ -20,3 +20,4 @@ fun getHashTagUtilCreatePost(namePost: HandlerName): ArrayList<String> {
     }
     return list
 }
+

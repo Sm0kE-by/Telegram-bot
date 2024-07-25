@@ -69,7 +69,7 @@ class SK_Bot(
             val callbackHandlerName = callbackArguments.first()
 
             if (callbackHandlerName == HandlerName.SEND_MESSAGE.text){
-                messageToSens = callbackQuery.message.text
+                messageToSens = message
             }
 
 

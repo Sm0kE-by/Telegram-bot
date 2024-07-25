@@ -8,6 +8,8 @@ import com.example.demo_bot.model.HandlerName
 import com.example.demo_bot.model.HashtagModel
 import com.example.demo_bot.util.createDialogMenu
 import com.example.demo_bot.util.getHashTagUtilCreatePost
+import com.example.demo_bot.util.previewMessage
+import com.example.demo_bot.util.sendMessage
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
@@ -19,6 +21,7 @@ class CreatePostHandlerMy(private val botAttributes: BotAttributes) : MyCallback
 
     override val name: HandlerName = HandlerName.CREATE_NEW_POST_BY_CRYPTO
     lateinit var list: List<String>
+    lateinit var listAttributes: List<String>
 
     val callbackSend = HandlerName.SEND_MESSAGE.text
     val callbackNext = HandlerName.CREATE_NEW_POST_BY_CRYPTO.text
@@ -62,20 +65,16 @@ class CreatePostHandlerMy(private val botAttributes: BotAttributes) : MyCallback
             )
         } else {
             list = getHashTagUtilCreatePost(HandlerName.CREATE_NEW_POST_BY_CRYPTO)
+            listAttributes = botAttributes.listAttributes
 
             absSender.execute(
                 createDialogMenu(
                     chatId = chatId,
-                    text =
-                    """                    
-                    [${botAttributes.attributes.headName}]${botAttributes.attributes.headLink}
-                    
-                    $message      
-                                
-                    $list
-                  
-                    [${botAttributes.attributes.youtubeAttributes}]${botAttributes.attributes.youtube} | [${botAttributes.attributes.tiktokAttributes}]${botAttributes.attributes.tiktok} | [${botAttributes.attributes.instagramAttributes}]${botAttributes.attributes.instagram} | [${botAttributes.attributes.telegraphAttributes}]${botAttributes.attributes.telegraph}                                      
-                """.trimIndent(),
+                    text = previewMessage(
+                        botAttributes,
+                        getHashTagUtilCreatePost(HandlerName.CREATE_NEW_POST_BY_CRYPTO),
+                        message
+                    ),
                    inlineButtons =  listOf(
                        listOf("$callbackSend|send" to "Отправить пост"),
                         listOf("$callbackBack|back" to "Назад"),

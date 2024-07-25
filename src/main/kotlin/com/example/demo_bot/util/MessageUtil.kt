@@ -1,5 +1,6 @@
 package com.example.demo_bot.util
 
+import com.example.demo_bot.model.BotAttributes
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
@@ -13,9 +14,6 @@ fun createMessage(chatId: String, text: String) =
     SendMessage(chatId, text)
         .apply { enableMarkdown(true) }
         .apply { disableWebPagePreview() }
-
-
-
 
 
 fun createDialogMenu(chatId: String, text: String, inlineButtons: List<List<Pair<String, String>>>) =
@@ -34,3 +32,19 @@ fun getInlineKeyboard(allButtons: List<List<Pair<String, String>>>): InlineKeybo
             }
         }
     }
+
+fun sendMessage(attributes: BotAttributes, listHashTags: List<String>, chatId: String, message: String) =
+    createMessage(
+        chatId,
+        previewMessage(attributes, listHashTags, message)
+    )
+fun previewMessage(attributes: BotAttributes, listHashTags: List<String>,message: String) =
+    """
+          [${attributes.attributes.headName}]${attributes.attributes.headLink}
+            
+            $message      
+                                            
+            $listHashTags
+                                
+            ${attributes.listAttributes}
+        """.trimIndent()

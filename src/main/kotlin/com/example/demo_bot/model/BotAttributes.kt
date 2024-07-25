@@ -46,4 +46,10 @@ class BotAttributes(
         instagram = instagram,
         telegraph = telegraph)
 
+    val listAttributes = listOf(
+        "[$youtubeAttributes]$youtube | ",
+        "[$tiktokAttributes]$tiktok | ",
+        "[$instagramAttributes]$instagram | ",
+        "[$telegraphAttributes]$telegraph",
+    )
 }
