@@ -1,6 +1,5 @@
 package com.example.demo_bot.model
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
@@ -46,10 +45,7 @@ class BotAttributes(
         instagram = instagram,
         telegraph = telegraph)
 
-    val listAttributes = listOf(
-        "[$youtubeAttributes]$youtube | ",
-        "[$tiktokAttributes]$tiktok | ",
-        "[$instagramAttributes]$instagram | ",
-        "[$telegraphAttributes]$telegraph",
-    )
+    val attributesLink =
+        "[$youtubeAttributes]$youtube | [$tiktokAttributes]$tiktok | [$instagramAttributes]$instagram | [$telegraphAttributes]$telegraph"
+
 }

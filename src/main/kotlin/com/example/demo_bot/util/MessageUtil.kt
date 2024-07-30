@@ -46,5 +46,5 @@ fun previewMessage(attributes: BotAttributes, listHashTags: List<String>,message
                                             
             $listHashTags
                                 
-            ${attributes.listAttributes}
+            ${attributes.attributesLink}
         """.trimIndent()
