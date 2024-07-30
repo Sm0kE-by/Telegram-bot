@@ -1,6 +1,7 @@
 package com.example.demo_bot.util
 
 import com.example.demo_bot.model.BotAttributes
+import com.example.demo_bot.model.HandlerName
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
@@ -15,6 +16,11 @@ fun createMessage(chatId: String, text: String) =
         .apply { enableMarkdown(true) }
         .apply { disableWebPagePreview() }
 
+
+//fun createMessageWithHandlerName(chatId: String, text: String, inlineButtons: List<List<Pair<String, String>>>, handlerName: HandlerName) =
+//    createMessage(chatId, text).apply {
+//        replyMarkup = getInlineKeyboard(inlineButtons)
+//    }
 
 fun createDialogMenu(chatId: String, text: String, inlineButtons: List<List<Pair<String, String>>>) =
     createMessage(chatId, text).apply {

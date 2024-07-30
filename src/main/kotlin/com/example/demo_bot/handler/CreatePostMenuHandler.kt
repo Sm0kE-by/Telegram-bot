@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 class CreatePostMenuHandler: MyCallbackHandlerBot {
 
     override val name: HandlerName = HandlerName.CREATE_POST_MENU
+    val fromHandlerName =  HandlerName.CREATE_POST_MENU.text
 
     val callbackCreateNewPost = HandlerName.CREATE_MESSAGE.text
     val callbackInviteNewGame = HandlerName.INVITE_NEW_GAME.text
@@ -31,10 +32,10 @@ class CreatePostMenuHandler: MyCallbackHandlerBot {
                 chatId,
                 "Выберите действие",
                 listOf(
-                    listOf("$callbackCreateNewPost|create_new_post" to "Создать пост про крипту"),
-                    listOf("$callbackInviteNewGame|invite_new_game" to "Приглошение в новую игру"),
-                    listOf("$callbackNewEventOnCryptoExchange|new_event_on_crypto_exchange" to "Событие на криптобирже"),
-                    listOf("$callbackDailyTaskInGames|daily_task_in_games" to "Ежедневные задания в играх"),
+                    listOf("$callbackCreateNewPost|create_new_post|$fromHandlerName" to "Создать пост про крипту"),
+                    listOf("$callbackInviteNewGame|invite_new_game|dfgfdg" to "Приглошение в новую игру"),
+                    listOf("$callbackNewEventOnCryptoExchange|new_event_on_crypto_exchange|fdgfd" to "Событие на криптобирже"),
+                    listOf("$callbackDailyTaskInGames|daily_task_in_games|dfgfdg" to "Ежедневные задания в играх"),
                 )
             )
         )
