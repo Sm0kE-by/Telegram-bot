@@ -1,4 +1,4 @@
-package com.example.demo_bot.model
+package com.example.demo_bot.model.enums
 
 enum class CommandName(val text: String) {
     START("start"),

@@ -2,7 +2,10 @@ package com.example.demo_bot.bot
 
 import com.example.demo_bot.handler.MyCallbackHandlerBot
 import com.example.demo_bot.learn_bot.createMessage
-import com.example.demo_bot.model.HandlerName
+import com.example.demo_bot.model.GameNameAttributes
+import com.example.demo_bot.model.enums.HandlerGamesName
+import com.example.demo_bot.model.enums.HandlerName
+import com.example.demo_bot.util.findNameGameAndLink
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot
@@ -22,6 +25,8 @@ class SK_Bot(
     private val botName: String = ""
     private lateinit var handlerMapping: Map<String, MyCallbackHandlerBot>
     private var message: String = ""
+    private var gameLink: String = ""
+    private val game = GameNameAttributes()
 
     init {
         registerAll(*commands.toTypedArray())
@@ -68,21 +73,25 @@ class SK_Bot(
             val callbackArguments = callbackData.split("|")
             val callbackHandlerName = callbackArguments.first()
 
-            if (callbackHandlerName == HandlerName.SEND_MESSAGE.text){
+            if (callbackHandlerName == HandlerName.SEND_MESSAGE.text) {
                 messageToSens = message
             }
-
+            //вроде всегда 3
+            if (callbackArguments.size == 3 && callbackArguments[2] == "daily_tasks_in_games") {
+                gameLink = ""
+                gameLink= "${findNameGameAndLink(callbackArguments[1],game)} - начни играть прямо сейчас!!!"
+            }
 
 //            createMessage(callbackQueryId, messageToSens)
-            if (messageToSens=="") {
+            if (messageToSens == "") {
                 handlerMapping.getValue(callbackHandlerName)
                     .myProcessCallbackData(
                         absSender = this,
                         callbackQuery = callbackQuery,
                         arguments = callbackArguments.subList(1, callbackArguments.size),
-                        message = message
+                        message = message + gameLink
                     )
-            } else{
+            } else {
                 handlerMapping.getValue(callbackHandlerName)
                     .myProcessCallbackData(
                         absSender = this,

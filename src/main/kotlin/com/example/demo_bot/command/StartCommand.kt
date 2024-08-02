@@ -1,7 +1,7 @@
 package com.example.demo_bot.command
 
-import com.example.demo_bot.model.CommandName
-import com.example.demo_bot.model.HandlerName
+import com.example.demo_bot.model.enums.CommandName
+import com.example.demo_bot.model.enums.HandlerName
 import com.example.demo_bot.util.createDialogMenu
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand
@@ -24,7 +24,8 @@ class StartCommand : BotCommand(CommandName.START.text, "") {
                 listOf(
                     listOf("$callbackCreatePost|create_post" to "Создать пост"),
                     listOf("$callbackChangeAttributes|change_attributes" to "Изменить атрибуты"),
-                )
+                ),
+                fromHandlerName = HandlerName.CREATE_POST_MENU
             )
         )
     }

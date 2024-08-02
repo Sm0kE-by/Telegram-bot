@@ -1,8 +1,7 @@
 package com.example.demo_bot.handler
 
-import com.example.demo_bot.model.HandlerName
+import com.example.demo_bot.model.enums.HandlerName
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
-import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 interface MyCallbackHandlerBot {

@@ -1,7 +1,6 @@
 package com.example.demo_bot.handler
 
-import com.example.demo_bot.model.BotAttributes
-import com.example.demo_bot.model.HandlerName
+import com.example.demo_bot.model.enums.HandlerName
 import com.example.demo_bot.util.createDialogMenu
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
@@ -32,11 +31,12 @@ class CreatePostMenuHandler: MyCallbackHandlerBot {
                 chatId,
                 "Выберите действие",
                 listOf(
-                    listOf("$callbackCreateNewPost|create_new_post|$fromHandlerName" to "Создать пост про крипту"),
-                    listOf("$callbackInviteNewGame|invite_new_game|dfgfdg" to "Приглошение в новую игру"),
-                    listOf("$callbackNewEventOnCryptoExchange|new_event_on_crypto_exchange|fdgfd" to "Событие на криптобирже"),
-                    listOf("$callbackDailyTaskInGames|daily_task_in_games|dfgfdg" to "Ежедневные задания в играх"),
-                )
+                    listOf("$callbackCreateNewPost|create_new_post" to "Создать пост про крипту"),
+                    listOf("$callbackInviteNewGame|invite_new_game" to "Приглошение в новую игру"),
+                    listOf("$callbackNewEventOnCryptoExchange|new_event_on_crypto" to "Событие на криптобирже"),
+                    listOf("$callbackDailyTaskInGames|daily_task_in_games" to "Ежедневные задания в играх"),
+                ),
+                fromHandlerName = name
             )
         )
 

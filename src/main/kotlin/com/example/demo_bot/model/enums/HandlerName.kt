@@ -1,11 +1,11 @@
-package com.example.demo_bot.model
+package com.example.demo_bot.model.enums
 
 enum class HandlerName(val text: String) {
-    CREATE_POST_MENU("create post-menu"),
+    CREATE_POST_MENU("create_post_menu"),
     INVITE_NEW_GAME("invite_new_game"),
-    CREATE_NEW_POST_BY_CRYPTO("create_new_post_by_crypt"),
+    MESSAGE_SKETCH("create_new_post_by_crypto"),
     CREATE_POST("create_post"),
-    NEW_EVENT_ON_CRYPTO_EXCHANGE("new_event_on_crypto_exchange"),
+    NEW_EVENT_ON_CRYPTO_EXCHANGE("new_event_on_crypto"),
     DAILY_TASKS_IN_GAMES("daily_tasks_in_games"),
     CHANGE_ATTRIBUTES("change_attributes"),
     CREATE_MESSAGE("create_message"),

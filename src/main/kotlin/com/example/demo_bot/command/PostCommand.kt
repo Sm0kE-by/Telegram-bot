@@ -1,7 +1,7 @@
 package com.example.demo_bot.command
 
-import com.example.demo_bot.model.CommandName
-import com.example.demo_bot.model.HandlerName
+import com.example.demo_bot.model.enums.CommandName
+import com.example.demo_bot.model.enums.HandlerName
 import com.example.demo_bot.util.createDialogMenu
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand
@@ -23,7 +23,8 @@ class PostCommand : BotCommand(CommandName.POST.text, "") {
                 listOf(
                     listOf("$callback|next" to "Далее"),
                     listOf("$callback|back" to "Назад"),
-                )
+                ),
+                HandlerName.CREATE_POST
             )
         )
     }
