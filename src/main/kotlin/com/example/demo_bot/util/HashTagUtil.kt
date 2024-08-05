@@ -45,6 +45,8 @@ fun getFromHandlerName(handlerName: String): HandlerName =
     when (handlerName) {
         HandlerName.CREATE_POST_MENU.text -> HandlerName.CREATE_POST_MENU
         HandlerName.DAILY_TASKS_IN_GAMES.text -> HandlerName.DAILY_TASKS_IN_GAMES
+        HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE
+        HandlerName.INVITE_NEW_GAME.text -> HandlerName.INVITE_NEW_GAME
         else -> HandlerName.CREATE_POST_MENU
     }
 
@@ -53,9 +55,10 @@ fun getExchangeName(exchangeName: String, exchange: ExchangeAttributes): String 
     var nameAndLink = ""
 
     when (exchangeName) {
-        "Bybit" -> nameAndLink = "[${exchange.byBit.name}]${exchange.byBit.link}"
-        "OKX" -> nameAndLink = "[${exchange.byBit.name}]${exchange.byBit.link}"
-        "Mexc" -> nameAndLink = "[${exchange.byBit.name}]${exchange.byBit.link}"
-        "BingX" -> nameAndLink = "[${exchange.byBit.name}]${exchange.byBit.link}"
+        "ByBit" -> nameAndLink = "[${exchange.byBit.name}]${exchange.byBit.link}"
+        "OKX" -> nameAndLink = "[${exchange.okx.name}]${exchange.okx.link}"
+        "Mexc" -> nameAndLink = "[${exchange.mexc.name}]${exchange.mexc.link}"
+        "BingX" -> nameAndLink = "[${exchange.bingX.name}]${exchange.bingX.link}"
     }
+    return nameAndLink
 }

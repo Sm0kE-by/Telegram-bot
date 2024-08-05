@@ -18,7 +18,8 @@ class NewEventOnCryptoExchangeHandler() : MyCallbackHandlerBot {
         absSender: AbsSender,
         callbackQuery: CallbackQuery,
         arguments: List<String>,
-        message: String
+        message: String,
+        link: String
     ) {
 
         val chatId = callbackQuery.message.chatId.toString()
@@ -29,8 +30,8 @@ class NewEventOnCryptoExchangeHandler() : MyCallbackHandlerBot {
                 chatId,
                 "Выберете криптобиржу",
                     listOf(
-                        listOf("$callbackNext|ByBit" to "Далее", "$callbackNext|OKX" to "Далее"),
-                        listOf("$callbackNext|Mexc" to "Далее", "$callbackNext|BingX" to "Далее"),
+                        listOf("$callbackNext|ByBit" to "ByBit", "$callbackNext|OKX" to "OKX"),
+                        listOf("$callbackNext|Mexc" to "Mexc", "$callbackNext|BingX" to "BingX"),
                         listOf("$callbackBack|back" to "Назад"),
                 ),
                 fromHandlerName = name

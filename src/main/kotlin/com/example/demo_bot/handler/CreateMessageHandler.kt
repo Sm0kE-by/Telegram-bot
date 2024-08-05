@@ -16,13 +16,15 @@ class CreateMessageHandler : MyCallbackHandlerBot {
 
     override val name: HandlerName = HandlerName.CREATE_MESSAGE
 
+    val callbackNext = HandlerName.MESSAGE_SKETCH.text
     val callbackBack = HandlerName.CREATE_POST_MENU.text
 
     override fun myProcessCallbackData(
         absSender: AbsSender,
         callbackQuery: CallbackQuery,
         arguments: List<String>,
-        message: String
+        message: String,
+        link: String
     ) {
 
         val chatId = callbackQuery.message.chatId.toString()
@@ -33,7 +35,7 @@ class CreateMessageHandler : MyCallbackHandlerBot {
                 chatId,
                 "Введите текс сообщения",
                 listOf(
-                    listOf("${getCallbackNext(fromHandlerName)}|next" to "Далее"),
+                    listOf("$callbackNext|next" to "Далее"),
                     listOf("$callbackBack|back" to "Назад"),
                 ),
                 fromHandlerName = name

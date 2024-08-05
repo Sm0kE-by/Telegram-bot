@@ -2,10 +2,7 @@ package com.example.demo_bot.handler
 
 import com.example.demo_bot.model.BotAttributes
 import com.example.demo_bot.model.enums.HandlerName
-import com.example.demo_bot.util.createDialogMenu
-import com.example.demo_bot.util.getFromHandlerName
-import com.example.demo_bot.util.getHashTagUtilCreatePost
-import com.example.demo_bot.util.sendMessage
+import com.example.demo_bot.util.*
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -21,18 +18,20 @@ class SendMessageHandler(private val botAttributes: BotAttributes) : MyCallbackH
         absSender: AbsSender,
         callbackQuery: CallbackQuery,
         arguments: List<String>,
-        message: String
+        message: String,
+        link: String
     ) {
         val fromHandlerName = arguments[1]
         val myChatId = callbackQuery.message.chatId.toString()
         val chatId = getChatIdForSendMessage(fromHandlerName)
 
         absSender.execute(
-            sendMessage(
+            sendMessageAndLink(
                 botAttributes,
                 getHashTagUtilCreatePost(HandlerName.MESSAGE_SKETCH),
                 chatId,
-                message
+                message,
+                link
             )
         )
         absSender.execute(

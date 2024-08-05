@@ -61,8 +61,27 @@ fun previewMessage(attributes: BotAttributes, listHashTags: List<String>, messag
           ${attributes.attributesLink}
         """.trimIndent()
 
+fun sendMessageAndLink(attributes: BotAttributes, listHashTags: List<String>, chatId: String, message: String, link: String) =
+    createMessage(
+        chatId,
+        previewMessageAndLinks(attributes, listHashTags, message, link)
+    )
+
+fun previewMessageAndLinks(attributes: BotAttributes, listHashTags: List<String>, message: String, link: String) =
+    """
+          [${attributes.attributes.headName}]${attributes.attributes.headLink}
+            
+          $message  
+              
+          $link
+                                            
+          $listHashTags
+                                
+          ${attributes.attributesLink}
+        """.trimIndent()
+
 fun findNameGameAndLink(param: String, game: GameNameAttributes): String {
-    var nameAndLink = param
+    var nameAndLink = ""
 
     when (param) {
 

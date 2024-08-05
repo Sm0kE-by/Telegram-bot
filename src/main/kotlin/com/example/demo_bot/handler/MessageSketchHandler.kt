@@ -4,10 +4,7 @@ import com.example.demo_bot.learn_bot.createMessage
 import com.example.demo_bot.learn_bot.getInlineKeyboard
 import com.example.demo_bot.model.BotAttributes
 import com.example.demo_bot.model.enums.HandlerName
-import com.example.demo_bot.util.createDialogMenu
-import com.example.demo_bot.util.getFromHandlerName
-import com.example.demo_bot.util.getHashTagUtilCreatePost
-import com.example.demo_bot.util.previewMessage
+import com.example.demo_bot.util.*
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
@@ -22,11 +19,10 @@ class MessageSketchHandler(private val botAttributes: BotAttributes) : MyCallbac
     lateinit var attributesLink: String
 
     val callbackSend = HandlerName.SEND_MESSAGE.text
-    val callbackNext = HandlerName.MESSAGE_SKETCH.text
     val callbackBack = HandlerName.CREATE_MESSAGE.text
 
     override fun myProcessCallbackData(
-        absSender: AbsSender, callbackQuery: CallbackQuery, arguments: List<String>, message: String
+        absSender: AbsSender, callbackQuery: CallbackQuery, arguments: List<String>, message: String, link: String
     ) {
         val fromHandlerName = arguments[1]
         val chatId = callbackQuery.message.chatId.toString()
@@ -62,10 +58,11 @@ class MessageSketchHandler(private val botAttributes: BotAttributes) : MyCallbac
             absSender.execute(
                 createDialogMenu(
                     chatId = chatId,
-                    text = previewMessage(
+                    text = previewMessageAndLinks(
                         botAttributes,
                         getHashTagUtilCreatePost(HandlerName.MESSAGE_SKETCH),
-                        message
+                        message,
+                        link,
                     ),
                    inlineButtons =  listOf(
                        listOf("$callbackSend|send" to "Отправить пост"),

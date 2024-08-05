@@ -82,7 +82,8 @@ class DailyTaskInGames(private val gameNameAttributes: GameNameAttributes) : MyC
         absSender: AbsSender,
         callbackQuery: CallbackQuery,
         arguments: List<String>,
-        message: String
+        message: String,
+        link: String
     ) {
 
         val chatId = callbackQuery.message.chatId.toString()

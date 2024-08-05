@@ -12,6 +12,7 @@ interface MyCallbackHandlerBot {
         absSender: AbsSender,
         callbackQuery: CallbackQuery,
         arguments: List<String>,
-        message: String
+        message: String,
+        link: String = ""
     )
 }

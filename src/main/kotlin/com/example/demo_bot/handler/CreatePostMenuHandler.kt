@@ -13,7 +13,7 @@ class CreatePostMenuHandler: MyCallbackHandlerBot {
     val fromHandlerName =  HandlerName.CREATE_POST_MENU.text
 
     val callbackCreateNewPost = HandlerName.CREATE_MESSAGE.text
-    val callbackInviteNewGame = HandlerName.INVITE_NEW_GAME.text
+    val callbackInviteNewGame = HandlerName.CREATE_MESSAGE.text
     val callbackNewEventOnCryptoExchange = HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text
     val callbackDailyTaskInGames = HandlerName.DAILY_TASKS_IN_GAMES.text
 
@@ -21,7 +21,8 @@ class CreatePostMenuHandler: MyCallbackHandlerBot {
         absSender: AbsSender,
         callbackQuery: CallbackQuery,
         arguments: List<String>,
-        message: String
+        message: String,
+        link: String
     ) {
 
         val chatId = callbackQuery.message.chatId.toString()
