@@ -26,9 +26,9 @@ class SendMessageHandler(private val botAttributes: BotAttributes) : MyCallbackH
         val chatId = getChatIdForSendMessage(fromHandlerName)
 
         absSender.execute(
-            sendMessageAndLink(
+            sendMessage(
                 botAttributes,
-                getHashTagUtilCreatePost(HandlerName.MESSAGE_SKETCH),
+                getHashTagUtilCreatePost(fromHandlerName),
                 chatId,
                 message,
                 link

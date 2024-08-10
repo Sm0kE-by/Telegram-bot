@@ -38,17 +38,17 @@ class CreateMessageHandler : MyCallbackHandlerBot {
                     listOf("$callbackNext|next" to "Далее"),
                     listOf("$callbackBack|back" to "Назад"),
                 ),
-                fromHandlerName = name
+                fromHandlerName = getFromHandlerName(fromHandlerName)
             )
         )
     }
 
     //зачем?
-    private fun getCallbackNext(handlerName: String) : String =
-        when (handlerName) {
-            HandlerName.CREATE_POST_MENU.text ->  HandlerName.MESSAGE_SKETCH.text
-            HandlerName.DAILY_TASKS_IN_GAMES.text -> HandlerName.MESSAGE_SKETCH.text
-            else -> CommandName.START.text
-        }
+//    private fun getFromHandlerName(handlerName: HandlerName) : String =
+//        when (handlerName) {
+//            HandlerName.CREATE_POST_MENU.text ->  HandlerName.MESSAGE_SKETCH.text
+//            HandlerName.DAILY_TASKS_IN_GAMES.text -> HandlerName.MESSAGE_SKETCH.text
+//            else -> CommandName.START.text
+//        }
 
 }

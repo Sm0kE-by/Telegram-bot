@@ -2,7 +2,6 @@ package com.example.demo_bot.util
 
 import com.example.demo_bot.model.BotAttributes
 import com.example.demo_bot.model.GameNameAttributes
-import com.example.demo_bot.model.enums.HandlerGamesName
 import com.example.demo_bot.model.enums.HandlerGamesName.*
 import com.example.demo_bot.model.enums.HandlerName
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -44,41 +43,52 @@ fun getInlineKeyboard(
         }
     }
 
-fun sendMessage(attributes: BotAttributes, listHashTags: List<String>, chatId: String, message: String) =
-    createMessage(
-        chatId,
-        previewMessage(attributes, listHashTags, message)
-    )
 
-fun previewMessage(attributes: BotAttributes, listHashTags: List<String>, message: String) =
-    """
+fun sendMessage(attributes: BotAttributes, listHashTags: List<String>, chatId: String, message: String, link: String) =
+    if (link == "") {
+        createMessage(chatId, previewMessage(attributes, listHashTags, message))
+    } else {
+        createMessage(chatId, previewMessageAndLinks(attributes, listHashTags, message, link))
+    }
+
+fun previewMessage(attributes: BotAttributes, listHashTags: List<String>, message: String): String {
+
+    var hash = String()
+    listHashTags.forEach { hash += "$it " }
+
+    return """
           [${attributes.attributes.headName}]${attributes.attributes.headLink}
             
           $message      
                                             
-          $listHashTags
-                                
+          $hash    
+                                      
           ${attributes.attributesLink}
         """.trimIndent()
+}
 
-fun sendMessageAndLink(attributes: BotAttributes, listHashTags: List<String>, chatId: String, message: String, link: String) =
-    createMessage(
-        chatId,
-        previewMessageAndLinks(attributes, listHashTags, message, link)
-    )
+fun previewMessageAndLinks(
+    attributes: BotAttributes,
+    listHashTags: List<String>,
+    message: String,
+    link: String
+): String {
 
-fun previewMessageAndLinks(attributes: BotAttributes, listHashTags: List<String>, message: String, link: String) =
-    """
+    var hash = String()
+    listHashTags.forEach { hash += "$it " }
+
+    return """
           [${attributes.attributes.headName}]${attributes.attributes.headLink}
             
           $message  
               
           $link
                                             
-          $listHashTags
-                                
+          $hash 
+                                         
           ${attributes.attributesLink}
         """.trimIndent()
+}
 
 fun findNameGameAndLink(param: String, game: GameNameAttributes): String {
     var nameAndLink = ""
@@ -117,10 +127,14 @@ fun findNameGameAndLink(param: String, game: GameNameAttributes): String {
         FROG_FARM.text -> nameAndLink = "[${game.frogFarm.name}]${game.frogFarm.link}"
         YESCOIN_WHITE.text -> nameAndLink = "[${game.yescoinWhite.name}]${game.yescoinWhite.link}"
         BRRRRR_GAME.text -> nameAndLink = "[${game.brrrrrGame.name}]${game.brrrrrGame.link}"
-        TIMECOIN_MINE_YOUR_TIME.text -> nameAndLink = "[${game.timecoinMineYourTime.name}]${game.timecoinMineYourTime.link}"
+        TIMECOIN_MINE_YOUR_TIME.text -> nameAndLink =
+            "[${game.timecoinMineYourTime.name}]${game.timecoinMineYourTime.link}"
+
         DOGS.text -> nameAndLink = "[${game.dogs.name}]${game.dogs.link}"
         ZAVOD_WALLET.text -> nameAndLink = "[${game.zavodWallet.name}]${game.zavodWallet.link}"
-        PIXEL_TAP_BY_PIXELVERCE.text -> nameAndLink = "$[game.pixelTapByPixelverse.name]${game.pixelTapByPixelverse.link}"
+        PIXEL_TAP_BY_PIXELVERCE.text -> nameAndLink =
+            "$[game.pixelTapByPixelverse.name]${game.pixelTapByPixelverse.link}"
+
         LIME_COIN.text -> nameAndLink = "[${game.limeCoin.name}]${game.limeCoin.link}"
         TIME_FARM.text -> nameAndLink = "[${game.timeFarm.name}]${game.timeFarm.link}"
         DJ_DOG.text -> nameAndLink = "[${game.djDog.name}]${game.djDog.link}"

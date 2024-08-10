@@ -1,5 +1,9 @@
 package com.example.demo_bot.handler
 
+import com.example.demo_bot.handler.MessageSketchHandler.Companion.createNewPost
+import com.example.demo_bot.handler.MessageSketchHandler.Companion.dailyTaskInGames
+import com.example.demo_bot.handler.MessageSketchHandler.Companion.inviteNewGame
+import com.example.demo_bot.handler.MessageSketchHandler.Companion.newEventOnCryptoExchange
 import com.example.demo_bot.model.enums.HandlerName
 import com.example.demo_bot.util.createDialogMenu
 import org.springframework.stereotype.Component
@@ -10,10 +14,10 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 class CreatePostMenuHandler: MyCallbackHandlerBot {
 
     override val name: HandlerName = HandlerName.CREATE_POST_MENU
-    val fromHandlerName =  HandlerName.CREATE_POST_MENU.text
+   // val fromHandlerName =  HandlerName.CREATE_POST_MENU.text
 
-    val callbackCreateNewPost = HandlerName.CREATE_MESSAGE.text
-    val callbackInviteNewGame = HandlerName.CREATE_MESSAGE.text
+    val callbackCreateNewPost = HandlerName.CREATE_POST_ABOUT_CRYPTO.text
+    val callbackInviteNewGame = HandlerName.INVITE_NEW_GAME.text
     val callbackNewEventOnCryptoExchange = HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text
     val callbackDailyTaskInGames = HandlerName.DAILY_TASKS_IN_GAMES.text
 
@@ -32,10 +36,10 @@ class CreatePostMenuHandler: MyCallbackHandlerBot {
                 chatId,
                 "Выберите действие",
                 listOf(
-                    listOf("$callbackCreateNewPost|create_new_post" to "Создать пост про крипту"),
-                    listOf("$callbackInviteNewGame|invite_new_game" to "Приглошение в новую игру"),
-                    listOf("$callbackNewEventOnCryptoExchange|new_event_on_crypto" to "Событие на криптобирже"),
-                    listOf("$callbackDailyTaskInGames|daily_task_in_games" to "Ежедневные задания в играх"),
+                    listOf("$callbackCreateNewPost|$createNewPost" to "Создать пост про крипту"),
+                    listOf("$callbackInviteNewGame|$inviteNewGame" to "Приглошение в новую игру"),
+                    listOf("$callbackNewEventOnCryptoExchange|$newEventOnCryptoExchange" to "Событие на криптобирже"),
+                    listOf("$callbackDailyTaskInGames|$dailyTaskInGames" to "Ежедневные задания в играх"),
                 ),
                 fromHandlerName = name
             )

@@ -52,20 +52,18 @@ class MessageSketchHandler(private val botAttributes: BotAttributes) : MyCallbac
 //                )
 //            )
         } else {
-            list = getHashTagUtilCreatePost(HandlerName.MESSAGE_SKETCH)
+            list = getHashTagUtilCreatePost(fromHandlerName)
             attributesLink = botAttributes.attributesLink
 
             absSender.execute(
                 createDialogMenu(
                     chatId = chatId,
-                    text = previewMessageAndLinks(
-                        botAttributes,
-                        getHashTagUtilCreatePost(HandlerName.MESSAGE_SKETCH),
+                    text = getTextMessage(
                         message,
-                        link,
+                        link
                     ),
-                   inlineButtons =  listOf(
-                       listOf("$callbackSend|send" to "Отправить пост"),
+                    inlineButtons = listOf(
+                        listOf("$callbackSend|send" to "Отправить пост"),
                         listOf("$callbackBack|back" to "Назад"),
                     ),
                     fromHandlerName = getFromHandlerName(fromHandlerName)
@@ -73,4 +71,20 @@ class MessageSketchHandler(private val botAttributes: BotAttributes) : MyCallbac
             )
         }
     }
+
+    companion object {
+        const val createNewPost = "create_new_post"
+        const val inviteNewGame = "invite_new_game"
+        const val newEventOnCryptoExchange = "new_event_on_crypto"
+        const val dailyTaskInGames = "daily_task_in_games"
+    }
+
+    private fun getTextMessage(message: String, link: String) =
+        if (link == "") {
+            previewMessage(botAttributes, list, message)
+        } else {
+            previewMessageAndLinks(botAttributes, list, message, link)
+        }
+
+
 }

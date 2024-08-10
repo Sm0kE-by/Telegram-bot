@@ -1,5 +1,6 @@
 package com.example.demo_bot.bot
 
+import com.example.demo_bot.command.StartCommand
 import com.example.demo_bot.handler.MyCallbackHandlerBot
 import com.example.demo_bot.learn_bot.createMessage
 import com.example.demo_bot.model.ExchangeAttributes
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
+import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands
 import org.telegram.telegrambots.meta.api.objects.Update
 
 @Component
@@ -30,10 +32,11 @@ class SK_Bot(
     private var gameLink: String = ""
     private val game = GameNameAttributes()
     private val exchange = ExchangeAttributes()
-
+//val list :List<BotCommand> = listOf(BotCommand("/start",""))
     init {
         registerAll(*commands.toTypedArray())
         handlerMapping = callbackHandlers.associateBy { it.name.text }
+        //this.execute(SetMyCommands(List<BotCommand>))
     }
 
     override fun getBotUsername(): String = botName

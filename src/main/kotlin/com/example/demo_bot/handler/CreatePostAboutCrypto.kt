@@ -7,8 +7,8 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class InviteNewGameHandler : MyCallbackHandlerBot {
-    override val name: HandlerName = HandlerName.INVITE_NEW_GAME
+class CreatePostAboutCrypto  : MyCallbackHandlerBot {
+    override val name: HandlerName = HandlerName.CREATE_POST_ABOUT_CRYPTO
 
     val callbackNext = HandlerName.CREATE_MESSAGE.text
     val callbackBack = HandlerName.CREATE_POST_MENU.text
@@ -26,7 +26,7 @@ class InviteNewGameHandler : MyCallbackHandlerBot {
         absSender.execute(
             createDialogMenu(
                 chatId,
-                "Вы выбрали пункт \"Приглошение в новую игру\" для продолжения нажмите \"Далее\"",
+                "Вы выбрали пункт \"Создать пост о криптовалюте\" для продолжения нажмите \"Далее\"",
                 listOf(
                     listOf("$callbackNext|next" to "Далее"),
                     listOf("$callbackBack|back" to "Назад"),
