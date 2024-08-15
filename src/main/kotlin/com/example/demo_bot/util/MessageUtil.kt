@@ -1,9 +1,19 @@
 package com.example.demo_bot.util
 
+<<<<<<< HEAD
 import com.example.demo_bot.model.BotAttributes
 import com.example.demo_bot.model.GameNameAttributes
 import com.example.demo_bot.model.enums.HandlerGamesName.*
 import com.example.demo_bot.model.enums.HandlerName
+=======
+import com.example.demo_bot.service.controllers.AttributesController
+import com.example.demo_bot.service.interfaces.AttributesRepository
+import com.example.demo_bot.service.interfaces.Impl.AttributesServiceImpl
+import com.example.demo_bot.view.model.BotAttributes
+import com.example.demo_bot.view.model.GameNameAttributes
+import com.example.demo_bot.view.model.enums.HandlerGamesName.*
+import com.example.demo_bot.view.model.enums.HandlerName
+>>>>>>> 5cf757e (complite beta version 1.1)
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton

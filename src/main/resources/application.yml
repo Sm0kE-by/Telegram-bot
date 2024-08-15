@@ -5,7 +5,11 @@ telegram:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
+<<<<<<< HEAD
     url: jdbc:postgresql://localhost:5432/tg_bot_db
+=======
+    url: jdbc:postgresql://localhost:5432/tg_bot
+>>>>>>> 5cf757e (complite beta version 1.1)
     username: postgres
     password: "5290768"
   jpa:
