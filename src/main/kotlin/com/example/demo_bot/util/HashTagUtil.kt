@@ -1,13 +1,7 @@
 package com.example.demo_bot.util
 
-<<<<<<< HEAD
-import com.example.demo_bot.model.ExchangeAttributes
-import com.example.demo_bot.model.enums.HandlerName
-=======
 import com.example.demo_bot.view.model.ExchangeAttributes
 import com.example.demo_bot.view.model.enums.HandlerName
->>>>>>> 5cf757e (complite beta version 1.1)
-
 
 
 fun getHashTagUtilCreatePost(namePost: String): ArrayList<String> {

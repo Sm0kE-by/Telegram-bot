@@ -2,7 +2,7 @@ package com.example.demo_bot.service.interfaces.Impl
 
 import com.example.demo_bot.data.entity.AttributeEntity
 import com.example.demo_bot.service.dto.AttributesDto
-import com.example.demo_bot.service.interfaces.AttributesRepository
+import com.example.demo_bot.service.repository.AttributesRepository
 import com.example.demo_bot.service.interfaces.AttributesService
 import org.springframework.stereotype.Service
 
@@ -18,7 +18,7 @@ class AttributesServiceImpl(
     private fun AttributeEntity.toDto(): AttributesDto =
         AttributesDto(
             id = this.id,
-            type_name = this.type_name,
+            typeName = this.typeName,
             attribute1 = this.attribute1,
             attribute2 = this.attribute2,
             attribute3 = this.attribute3,

@@ -1,5 +1,6 @@
 package com.example.demo_bot.view.handler
 
+import com.example.demo_bot.service.interfaces.SocialMediaLinkService
 import com.example.demo_bot.view.learn_bot.createMessage
 import com.example.demo_bot.view.learn_bot.getInlineKeyboard
 import com.example.demo_bot.view.model.BotAttributes
@@ -11,7 +12,10 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class MessageSketchHandler(private val botAttributes: BotAttributes) : MyCallbackHandlerBot {
+class MessageSketchHandler(
+    private val botAttributes: BotAttributes,
+    private val socialMediaLinkService: SocialMediaLinkService
+) : MyCallbackHandlerBot {
 
 
     override val name: HandlerName = HandlerName.MESSAGE_SKETCH
@@ -20,6 +24,7 @@ class MessageSketchHandler(private val botAttributes: BotAttributes) : MyCallbac
 
     val callbackSend = HandlerName.SEND_MESSAGE.text
     val callbackBack = HandlerName.CREATE_MESSAGE.text
+    private val socialLink = socialMediaLinkService.getAll()
 
     override fun myProcessCallbackData(
         absSender: AbsSender, callbackQuery: CallbackQuery, arguments: List<String>, message: String, link: String
@@ -81,9 +86,9 @@ class MessageSketchHandler(private val botAttributes: BotAttributes) : MyCallbac
 
     private fun getTextMessage(message: String, link: String) =
         if (link == "") {
-            previewMessage(botAttributes, list, message)
+            previewMessage(botAttributes, list, message, socialLink)
         } else {
-            previewMessageAndLinks(botAttributes, list, message, link)
+            previewMessageAndLinks(botAttributes, list, message, link, socialLink)
         }
 
 

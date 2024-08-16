@@ -1,19 +1,10 @@
 package com.example.demo_bot.util
 
-<<<<<<< HEAD
-import com.example.demo_bot.model.BotAttributes
-import com.example.demo_bot.model.GameNameAttributes
-import com.example.demo_bot.model.enums.HandlerGamesName.*
-import com.example.demo_bot.model.enums.HandlerName
-=======
-import com.example.demo_bot.service.controllers.AttributesController
-import com.example.demo_bot.service.interfaces.AttributesRepository
-import com.example.demo_bot.service.interfaces.Impl.AttributesServiceImpl
+import com.example.demo_bot.service.dto.SocialMediaLinkDto
 import com.example.demo_bot.view.model.BotAttributes
 import com.example.demo_bot.view.model.GameNameAttributes
 import com.example.demo_bot.view.model.enums.HandlerGamesName.*
 import com.example.demo_bot.view.model.enums.HandlerName
->>>>>>> 5cf757e (complite beta version 1.1)
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
@@ -54,26 +45,37 @@ fun getInlineKeyboard(
     }
 
 
-fun sendMessage(attributes: BotAttributes, listHashTags: List<String>, chatId: String, message: String, link: String) =
+fun sendMessage(
+    attributes: BotAttributes,
+    listHashTags: List<String>,
+    chatId: String,
+    message: String,
+    link: String,
+    socialLink: List<SocialMediaLinkDto>
+) =
     if (link == "") {
-        createMessage(chatId, previewMessage(attributes, listHashTags, message))
+        createMessage(chatId, previewMessage(attributes, listHashTags, message, socialLink))
     } else {
-        createMessage(chatId, previewMessageAndLinks(attributes, listHashTags, message, link))
+        createMessage(chatId, previewMessageAndLinks(attributes, listHashTags, message, link, socialLink))
     }
 
-fun previewMessage(attributes: BotAttributes, listHashTags: List<String>, message: String): String {
+fun previewMessage(
+    attributes: BotAttributes,
+    listHashTags: List<String>,
+    message: String,
+    socialLink: List<SocialMediaLinkDto>
+): String {
 
-    var hash = String()
-    listHashTags.forEach { hash += "$it " }
+val listHashAndSocial = getHashAndSocial(listHashTags, socialLink)
 
     return """
           [${attributes.attributes.headName}]${attributes.attributes.headLink}
             
           $message      
                                             
-          $hash    
+          ${listHashAndSocial[0]}    
                                       
-          ${attributes.attributesLink}
+          ${listHashAndSocial[1]}
         """.trimIndent()
 }
 
@@ -81,11 +83,11 @@ fun previewMessageAndLinks(
     attributes: BotAttributes,
     listHashTags: List<String>,
     message: String,
-    link: String
+    link: String,
+    socialLink: List<SocialMediaLinkDto>
 ): String {
 
-    var hash = String()
-    listHashTags.forEach { hash += "$it " }
+    val listHashAndSocial = getHashAndSocial(listHashTags, socialLink)
 
     return """
           [${attributes.attributes.headName}]${attributes.attributes.headLink}
@@ -94,10 +96,20 @@ fun previewMessageAndLinks(
               
           $link
                                             
-          $hash 
+          ${listHashAndSocial[0]}  
                                          
-          ${attributes.attributesLink}
+          ${listHashAndSocial[1]} 
         """.trimIndent()
+}
+
+private fun getHashAndSocial(listHashTags: List<String>, socialLink: List<SocialMediaLinkDto>): List<String> {
+
+    var hash = String()
+    var social = String()
+    listHashTags.forEach { hash += "$it " }
+    socialLink.forEach { social += "[${it.name}](${it.link}) " }
+
+    return listOf(hash, social)
 }
 
 fun findNameGameAndLink(param: String, game: GameNameAttributes): String {

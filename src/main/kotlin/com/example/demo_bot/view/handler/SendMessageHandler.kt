@@ -1,18 +1,25 @@
-package com.example.demo_bot.handler
+package com.example.demo_bot.view.handler
 
-import com.example.demo_bot.model.BotAttributes
-import com.example.demo_bot.model.enums.HandlerName
+import com.example.demo_bot.service.interfaces.AttributesService
+import com.example.demo_bot.service.interfaces.SocialMediaLinkService
+import com.example.demo_bot.view.model.BotAttributes
+import com.example.demo_bot.view.model.enums.HandlerName
 import com.example.demo_bot.util.*
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class SendMessageHandler(private val botAttributes: BotAttributes) : MyCallbackHandlerBot {
+class SendMessageHandler(
+    private val botAttributes: BotAttributes,
+    private val attributesService: AttributesService,
+    private val socialMediaLinkService: SocialMediaLinkService,
+) : MyCallbackHandlerBot {
 
     override val name: HandlerName = HandlerName.SEND_MESSAGE
 
     val callbackBack = HandlerName.CREATE_POST_MENU.text
+    val socialLink = socialMediaLinkService.getAll()
 
     override fun myProcessCallbackData(
         absSender: AbsSender,
@@ -25,13 +32,19 @@ class SendMessageHandler(private val botAttributes: BotAttributes) : MyCallbackH
         val myChatId = callbackQuery.message.chatId.toString()
         val chatId = getChatIdForSendMessage(fromHandlerName)
 
+        //Deleted!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        val attr = attributesService.getById(1)
+        val listAttributes: List<String> = listOf(attr.attribute1, attr.attribute2, attr.attribute3, attr.attribute4, attr.attribute5)
+
         absSender.execute(
             sendMessage(
                 botAttributes,
-                getHashTagUtilCreatePost(fromHandlerName),
+                //getHashTagUtilCreatePost(fromHandlerName),
+                listAttributes,
                 chatId,
                 message,
-                link
+                link,
+                socialLink
             )
         )
         absSender.execute(
