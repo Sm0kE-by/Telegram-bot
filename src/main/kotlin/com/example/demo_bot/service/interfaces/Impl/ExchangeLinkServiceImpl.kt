@@ -13,6 +13,8 @@ class ExchangeLinkServiceImpl(private val exchangeLinkRepository: ExchangeLinkRe
     override fun getAll(): List<ExchangeLinkDto> =
         exchangeLinkRepository.findAllByOrderByName().map { it.toDto() }
 
+    override fun getByName(name: String): ExchangeLinkDto = exchangeLinkRepository.findByName(name).toDto()
+
     private fun ExchangeLinkEntity.toDto(): ExchangeLinkDto = ExchangeLinkDto(
         id = this.id,
         name = this.name,

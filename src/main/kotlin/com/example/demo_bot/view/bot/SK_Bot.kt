@@ -1,5 +1,6 @@
 package com.example.demo_bot.view.bot
 
+import com.example.demo_bot.service.interfaces.ExchangeLinkService
 import com.example.demo_bot.service.interfaces.Impl.AttributesServiceImpl
 import com.example.demo_bot.view.command.StartCommand
 import com.example.demo_bot.view.handler.MyCallbackHandlerBot
@@ -24,6 +25,7 @@ class SK_Bot(
     callbackHandlers: Set<MyCallbackHandlerBot>,
     @Value("\${telegram.token}")
     token: String,
+    private val exchangeLinkService: ExchangeLinkService,
 ) : TelegramLongPollingCommandBot(token) {
 
     @Value("\${telegram.botName}")
@@ -94,7 +96,9 @@ class SK_Bot(
             //вроде всегда 3
             //создаем ссылку на биржу из события на криптобирже
             if (callbackArguments.size == 3 && callbackArguments[2] == "new_event_on_crypto") {
-                val link = getExchangeName(callbackArguments[1],exchange)
+                val exchange = exchangeLinkService.getByName(callbackArguments[1])
+                val link = "[${exchange.name}](${exchange.link})"
+    //            val link = getExchangeName(callbackArguments[1],exchange)
                 gameLink = ""
                 gameLink= "$link - регистрируйся прямо сейчас и получай крутой бонус по моей реферальной ссылке!!!"
             }

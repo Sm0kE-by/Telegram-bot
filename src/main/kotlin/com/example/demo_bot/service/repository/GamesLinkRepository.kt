@@ -6,4 +6,6 @@ import org.springframework.data.repository.CrudRepository
 interface GamesLinkRepository: CrudRepository<GamesLinkEntity, Int> {
 
     fun findAllByOrderByName(): List<GamesLinkEntity>
+
+    fun findByName(name: String): GamesLinkEntity
 }

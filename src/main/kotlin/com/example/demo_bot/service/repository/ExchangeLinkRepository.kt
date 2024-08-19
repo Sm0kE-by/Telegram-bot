@@ -6,4 +6,6 @@ import org.springframework.data.repository.CrudRepository
 interface ExchangeLinkRepository: CrudRepository<ExchangeLinkEntity, Int> {
 
     fun findAllByOrderByName(): List<ExchangeLinkEntity>
+
+    fun findByName(name: String): ExchangeLinkEntity
 }
