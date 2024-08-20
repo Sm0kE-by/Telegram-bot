@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository
 
 interface AttributesRepository: CrudRepository<AttributeEntity, Int> {
 
-    fun getById(id:Int): AttributeEntity
+    fun getByName(name: String): AttributeEntity
 }

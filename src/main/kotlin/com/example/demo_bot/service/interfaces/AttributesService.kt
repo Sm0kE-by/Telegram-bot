@@ -4,5 +4,5 @@ import com.example.demo_bot.service.dto.AttributesDto
 
 interface AttributesService {
 
-    fun getById(id: Int): AttributesDto
+    fun getByName(name: String): AttributesDto
 }

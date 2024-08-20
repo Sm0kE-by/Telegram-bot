@@ -6,6 +6,7 @@ import com.example.demo_bot.view.learn_bot.getInlineKeyboard
 import com.example.demo_bot.view.model.BotAttributes
 import com.example.demo_bot.view.model.enums.HandlerName
 import com.example.demo_bot.util.*
+import com.example.demo_bot.view.model.MessageModel
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
@@ -19,7 +20,7 @@ class MessageSketchHandler(
 
 
     override val name: HandlerName = HandlerName.MESSAGE_SKETCH
-    lateinit var list: List<String>
+//    lateinit var list: List<String>
     lateinit var attributesLink: String
 
     val callbackSend = HandlerName.SEND_MESSAGE.text
@@ -27,9 +28,9 @@ class MessageSketchHandler(
     private val socialLink = socialMediaLinkService.getAll()
 
     override fun myProcessCallbackData(
-        absSender: AbsSender, callbackQuery: CallbackQuery, arguments: List<String>, message: String, link: String
+        absSender: AbsSender, callbackQuery: CallbackQuery, message: MessageModel,
     ) {
-        val fromHandlerName = arguments[1]
+        //       val fromHandlerName = arguments[1]
         val chatId = callbackQuery.message.chatId.toString()
         //val messageUser = callbackQuery.message.text.toString()
 
@@ -43,7 +44,7 @@ class MessageSketchHandler(
 //            )
 //        )
 
-        if (message.isEmpty()) {
+        if (message.text.isEmpty()) {
             absSender.execute(createMessage(chatId, "Вы не ввели сообщение!!!"))
 //            absSender.execute(
 //                createDialogMenu(
@@ -57,38 +58,35 @@ class MessageSketchHandler(
 //                )
 //            )
         } else {
-            list = getHashTagUtilCreatePost(fromHandlerName)
-            attributesLink = botAttributes.attributesLink
+//            list = getHashTagUtilCreatePost(fromHandlerName)
+//            attributesLink = botAttributes.attributesLink
 
             absSender.execute(
                 createDialogMenu(
                     chatId = chatId,
-                    text = getTextMessage(
-                        message,
-                        link
-                    ),
+                    text = getTextMessage(message),
                     inlineButtons = listOf(
                         listOf("$callbackSend|send" to "Отправить пост"),
                         listOf("$callbackBack|back" to "Назад"),
                     ),
-                    fromHandlerName = getFromHandlerName(fromHandlerName)
+//                    fromHandlerName = getFromHandlerName(fromHandlerName)
                 )
             )
         }
     }
 
-    companion object {
-        const val createNewPost = "create_new_post"
-        const val inviteNewGame = "invite_new_game"
-        const val newEventOnCryptoExchange = "new_event_on_crypto"
-        const val dailyTaskInGames = "daily_task_in_games"
-    }
+//    companion object {
+//        const val createNewPost = "create_new_post"
+//        const val inviteNewGame = "invite_new_game"
+//        const val newEventOnCryptoExchange = "new_event_on_crypto"
+//        const val dailyTaskInGames = "daily_task_in_games"
+//    }
 
-    private fun getTextMessage(message: String, link: String) =
-        if (link == "") {
-            previewMessage(botAttributes, list, message, socialLink)
+    private fun getTextMessage(message: MessageModel) =
+        if (message.link == "") {
+            previewMessage(message)
         } else {
-            previewMessageAndLinks(botAttributes, list, message, link, socialLink)
+            previewMessageAndLinks(message)
         }
 
 

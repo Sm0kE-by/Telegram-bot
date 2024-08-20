@@ -5,6 +5,7 @@ import com.example.demo_bot.service.interfaces.SocialMediaLinkService
 import com.example.demo_bot.view.model.BotAttributes
 import com.example.demo_bot.view.model.enums.HandlerName
 import com.example.demo_bot.util.*
+import com.example.demo_bot.view.model.MessageModel
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -24,27 +25,25 @@ class SendMessageHandler(
     override fun myProcessCallbackData(
         absSender: AbsSender,
         callbackQuery: CallbackQuery,
-        arguments: List<String>,
-        message: String,
-        link: String
+        message: MessageModel,
     ) {
-        val fromHandlerName = arguments[1]
+//        val fromHandlerName = arguments[1]
         val myChatId = callbackQuery.message.chatId.toString()
-        val chatId = getChatIdForSendMessage(fromHandlerName)
+        val chatId = "-1002115452577"
 
         //Deleted!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        val attr = attributesService.getById(1)
-        val listAttributes: List<String> = listOf(attr.attribute1, attr.attribute2, attr.attribute3, attr.attribute4, attr.attribute5)
+//        val attr = attributesService.getById(1)
+//        val listAttributes: List<String> = listOf(attr.attribute1, attr.attribute2, attr.attribute3, attr.attribute4, attr.attribute5)
 
         absSender.execute(
             sendMessage(
-                botAttributes,
-                //getHashTagUtilCreatePost(fromHandlerName),
-                listAttributes,
+//                botAttributes,
+//                //getHashTagUtilCreatePost(fromHandlerName),
+//                listAttributes,
                 chatId,
                 message,
-                link,
-                socialLink
+//                link,
+//                socialLink
             )
         )
         absSender.execute(
@@ -54,7 +53,7 @@ class SendMessageHandler(
                 listOf(
                     listOf("$callbackBack|back" to "Готово"),
                 ),
-                fromHandlerName = getFromHandlerName(fromHandlerName)
+//                fromHandlerName = getFromHandlerName(fromHandlerName)
             )
         )
     }

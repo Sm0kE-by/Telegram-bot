@@ -9,6 +9,7 @@ import com.example.demo_bot.view.model.GameNameAttributes
 import com.example.demo_bot.view.model.enums.HandlerGamesName
 import com.example.demo_bot.view.model.enums.HandlerName
 import com.example.demo_bot.util.createDialogMenu
+import com.example.demo_bot.view.model.MessageModel
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -89,9 +90,7 @@ class DailyTaskInGames(
     override fun myProcessCallbackData(
         absSender: AbsSender,
         callbackQuery: CallbackQuery,
-        arguments: List<String>,
-        message: String,
-        link: String
+        message: MessageModel,
     ) {
 
         val chatId = callbackQuery.message.chatId.toString()
@@ -207,7 +206,7 @@ class DailyTaskInGames(
 //                    ),
 //
 //                    ),
-                fromHandlerName = name
+      //          fromHandlerName = name
             )
         )
     }

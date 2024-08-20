@@ -5,6 +5,7 @@ import com.example.demo_bot.view.model.enums.CommandName
 import com.example.demo_bot.view.model.enums.HandlerName
 import com.example.demo_bot.util.createDialogMenu
 import com.example.demo_bot.util.getFromHandlerName
+import com.example.demo_bot.view.model.MessageModel
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
@@ -22,13 +23,11 @@ class CreateMessageHandler : MyCallbackHandlerBot {
     override fun myProcessCallbackData(
         absSender: AbsSender,
         callbackQuery: CallbackQuery,
-        arguments: List<String>,
-        message: String,
-        link: String
+        message: MessageModel,
     ) {
 
         val chatId = callbackQuery.message.chatId.toString()
-        val fromHandlerName = arguments[1]
+//        val fromHandlerName = arguments[1]
 
         absSender.execute(
             createDialogMenu(
@@ -38,7 +37,7 @@ class CreateMessageHandler : MyCallbackHandlerBot {
                     listOf("$callbackNext|next" to "Далее"),
                     listOf("$callbackBack|back" to "Назад"),
                 ),
-                fromHandlerName = getFromHandlerName(fromHandlerName)
+  //              fromHandlerName = getFromHandlerName(fromHandlerName)
             )
         )
     }

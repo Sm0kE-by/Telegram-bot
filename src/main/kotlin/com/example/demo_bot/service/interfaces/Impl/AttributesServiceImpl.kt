@@ -11,14 +11,14 @@ class AttributesServiceImpl(
     private val attributesRepository: AttributesRepository
 ): AttributesService {
 
-    override fun getById(id: Int): AttributesDto =
-        attributesRepository.getById(id).toDto()
+    override fun getByName(name: String): AttributesDto  =
+        attributesRepository.getByName(name).toDto()
 
 
     private fun AttributeEntity.toDto(): AttributesDto =
         AttributesDto(
             id = this.id,
-            typeName = this.typeName,
+            name = this.name,
             attribute1 = this.attribute1,
             attribute2 = this.attribute2,
             attribute3 = this.attribute3,

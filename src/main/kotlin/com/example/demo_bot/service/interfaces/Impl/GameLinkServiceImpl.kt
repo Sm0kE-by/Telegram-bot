@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 class GameLinkServiceImpl(private val gamesLinkRepository: GamesLinkRepository) : GameLinkService {
 
     override fun getAll(): List<GameLinkDto> = gamesLinkRepository.findAllByOrderByName().map { it.toDto() }
+    override fun getByName(name: String): GameLinkDto = gamesLinkRepository.getByName(name).toDto()
 
     private fun GamesLinkEntity.toDto(): GameLinkDto = GameLinkDto(
         id = this.id,

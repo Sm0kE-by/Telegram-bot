@@ -3,8 +3,8 @@ package com.example.demo_bot.util
 import com.example.demo_bot.service.dto.SocialMediaLinkDto
 import com.example.demo_bot.view.model.BotAttributes
 import com.example.demo_bot.view.model.GameNameAttributes
+import com.example.demo_bot.view.model.MessageModel
 import com.example.demo_bot.view.model.enums.HandlerGamesName.*
-import com.example.demo_bot.view.model.enums.HandlerName
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
@@ -23,22 +23,26 @@ fun createDialogMenu(
     chatId: String,
     text: String,
     inlineButtons: List<List<Pair<String, String>>>,
-    fromHandlerName: HandlerName
+//    fromHandlerName: HandlerName
 ) =
     createMessage(chatId, text).apply {
-        replyMarkup = getInlineKeyboard(inlineButtons, fromHandlerName)
+        replyMarkup = getInlineKeyboard(
+            inlineButtons
+            //, fromHandlerName
+        )
     }
 
 fun getInlineKeyboard(
     allButtons: List<List<Pair<String, String>>>,
-    fromHandlerName: HandlerName
+    //   fromHandlerName: HandlerName
 ): InlineKeyboardMarkup =
     InlineKeyboardMarkup().apply {
         keyboard = allButtons.map { rowButtons ->
             rowButtons.map { (data, buttonText) ->
                 InlineKeyboardButton().apply {
                     text = buttonText
-                    callbackData = "$data|${fromHandlerName.text}"
+                    callbackData = "$data"
+                    //       "|${fromHandlerName.text}"
                 }
             }
         }
@@ -46,59 +50,53 @@ fun getInlineKeyboard(
 
 
 fun sendMessage(
-    attributes: BotAttributes,
-    listHashTags: List<String>,
+//    attributes: BotAttributes,
+//    listHashTags: List<String>,
     chatId: String,
-    message: String,
-    link: String,
-    socialLink: List<SocialMediaLinkDto>
+//    message: String,
+//    link: String,
+//    socialLink: List<SocialMediaLinkDto>
+    message: MessageModel
 ) =
-    if (link == "") {
-        createMessage(chatId, previewMessage(attributes, listHashTags, message, socialLink))
+    if (message.link == "") {
+        createMessage(chatId, previewMessage(message))
     } else {
-        createMessage(chatId, previewMessageAndLinks(attributes, listHashTags, message, link, socialLink))
+        createMessage(chatId, previewMessageAndLinks(message))
     }
 
 fun previewMessage(
-    attributes: BotAttributes,
-    listHashTags: List<String>,
-    message: String,
-    socialLink: List<SocialMediaLinkDto>
+    message: MessageModel
 ): String {
 
-val listHashAndSocial = getHashAndSocial(listHashTags, socialLink)
+//    val listHashAndSocial = getHashAndSocial(listHashTags, socialLink)
 
     return """
-          [${attributes.attributes.headName}]${attributes.attributes.headLink}
+          ${message.title}
             
-          $message      
+          ${message.text}      
                                             
-          ${listHashAndSocial[0]}    
+          ${message.hashTags}    
                                       
-          ${listHashAndSocial[1]}
+          ${message.socialLink}
         """.trimIndent()
 }
 
 fun previewMessageAndLinks(
-    attributes: BotAttributes,
-    listHashTags: List<String>,
-    message: String,
-    link: String,
-    socialLink: List<SocialMediaLinkDto>
+    message: MessageModel
 ): String {
 
-    val listHashAndSocial = getHashAndSocial(listHashTags, socialLink)
+//    val listHashAndSocial = getHashAndSocial(listHashTags, socialLink)
 
     return """
-          [${attributes.attributes.headName}]${attributes.attributes.headLink}
+          ${message.title}
             
-          $message  
+          ${message.text} 
               
-          $link
+          ${message.link}
                                             
-          ${listHashAndSocial[0]}  
-                                         
-          ${listHashAndSocial[1]} 
+          ${message.hashTags}    
+                                                
+          ${message.socialLink} 
         """.trimIndent()
 }
 

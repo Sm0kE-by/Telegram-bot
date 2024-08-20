@@ -4,6 +4,7 @@ import com.example.demo_bot.service.dto.ExchangeLinkDto
 import com.example.demo_bot.service.interfaces.ExchangeLinkService
 import com.example.demo_bot.view.model.enums.HandlerName
 import com.example.demo_bot.util.createDialogMenu
+import com.example.demo_bot.view.model.MessageModel
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -22,13 +23,10 @@ class NewEventOnCryptoExchangeHandler(
     override fun myProcessCallbackData(
         absSender: AbsSender,
         callbackQuery: CallbackQuery,
-        arguments: List<String>,
-        message: String,
-        link: String
+        message: MessageModel,
     ) {
 
         val chatId = callbackQuery.message.chatId.toString()
-        val fromHandlerName = arguments[1]
 
         absSender.execute(
             createDialogMenu(
@@ -41,7 +39,7 @@ class NewEventOnCryptoExchangeHandler(
 //                    listOf("$callbackNext|Mexc" to "Mexc", "$callbackNext|BingX" to "BingX"),
 //                    listOf("$callbackBack|back" to "Назад"),
 //                ),
-                fromHandlerName = name
+                //fromHandlerName = name
             )
         )
     }

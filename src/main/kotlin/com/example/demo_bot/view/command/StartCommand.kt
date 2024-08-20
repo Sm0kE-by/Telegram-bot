@@ -25,7 +25,7 @@ class StartCommand : BotCommand(CommandName.START.text, "") {
                     listOf("$callbackCreatePost|create_post" to "Создать пост"),
                     listOf("$callbackChangeAttributes|change_attributes" to "Изменить атрибуты"),
                 ),
-                fromHandlerName = HandlerName.CREATE_POST_MENU
+                //fromHandlerName = HandlerName.CREATE_POST_MENU
             )
         )
     }
