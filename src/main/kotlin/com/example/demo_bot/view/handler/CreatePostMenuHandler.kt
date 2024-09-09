@@ -4,6 +4,7 @@ package com.example.demo_bot.view.handler
 //import com.example.demo_bot.view.handler.MessageSketchHandler.Companion.dailyTaskInGames
 //import com.example.demo_bot.view.handler.MessageSketchHandler.Companion.inviteNewGame
 //import com.example.demo_bot.view.handler.MessageSketchHandler.Companion.newEventOnCryptoExchange
+import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.view.model.enums.HandlerName
 import com.example.demo_bot.util.createDialogMenu
 import com.example.demo_bot.view.model.MessageModel
@@ -24,19 +25,16 @@ class CreatePostMenuHandler: MyCallbackHandlerBot {
 
     override fun myProcessCallbackData(
         absSender: AbsSender,
-        callbackQuery: CallbackQuery,
-        message: MessageModel,
+        chatId: String,
+        message: MessageUserDto,
     ) {
-
-        val chatId = callbackQuery.message.chatId.toString()
-
         absSender.execute(
             createDialogMenu(
                 chatId,
                 "Выберите действие",
                 listOf(
                     listOf("$callbackCreateNewPost|${HandlerName.CREATE_POST_ABOUT_CRYPTO.text}" to "Создать пост про крипту"),
-                    listOf("$callbackInviteNewGame|${HandlerName.INVITE_NEW_GAME.text}" to "Приглошение в новую игру"),
+                    listOf("$callbackInviteNewGame|${HandlerName.INVITE_NEW_GAME.text}" to "Приглашение в новую игру"),
                     listOf("$callbackNewEventOnCryptoExchange|${HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text}" to "Событие на криптобирже"),
                     listOf("$callbackDailyTaskInGames|${HandlerName.DAILY_TASKS_IN_GAMES.text}" to "Ежедневные задания в играх"),
                 ),

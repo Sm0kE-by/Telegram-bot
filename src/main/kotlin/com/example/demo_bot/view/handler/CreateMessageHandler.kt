@@ -1,5 +1,6 @@
 package com.example.demo_bot.view.handler
 
+import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.view.learn_bot.getInlineKeyboard
 import com.example.demo_bot.view.model.enums.CommandName
 import com.example.demo_bot.view.model.enums.HandlerName
@@ -22,11 +23,9 @@ class CreateMessageHandler : MyCallbackHandlerBot {
 
     override fun myProcessCallbackData(
         absSender: AbsSender,
-        callbackQuery: CallbackQuery,
-        message: MessageModel,
+        chatId: String,
+        message: MessageUserDto,
     ) {
-
-        val chatId = callbackQuery.message.chatId.toString()
 //        val fromHandlerName = arguments[1]
 
         absSender.execute(

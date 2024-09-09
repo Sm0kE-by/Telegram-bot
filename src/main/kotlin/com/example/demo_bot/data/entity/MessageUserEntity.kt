@@ -1,9 +1,6 @@
 package com.example.demo_bot.data.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "message_user")
@@ -14,7 +11,13 @@ class MessageUserEntity(
     var title: String = "",
     var text: String = "",
     var link: String = "",
-    var hashTags: String = "",
+    @Column(name = "hash_tage")
+    var hashTage: String = "",
+    @Column(name = "social_link")
     var socialLink: String = "",
+    @Column(name = "from_handler")
     var fromHandler: String = "",
+    @OneToMany(mappedBy = "messageUser", fetch = FetchType.EAGER)
+//    @JoinColumn(name = "message_id")
+    var listPhoto: List<MessagePhotoEntity> = emptyList()
 )

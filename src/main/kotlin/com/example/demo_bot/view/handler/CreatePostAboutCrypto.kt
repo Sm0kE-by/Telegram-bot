@@ -1,5 +1,6 @@
 package com.example.demo_bot.view.handler
 
+import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.view.model.enums.HandlerName
 import com.example.demo_bot.util.createDialogMenu
 import com.example.demo_bot.view.model.MessageModel
@@ -16,12 +17,9 @@ class CreatePostAboutCrypto  : MyCallbackHandlerBot {
 
     override fun myProcessCallbackData(
         absSender: AbsSender,
-        callbackQuery: CallbackQuery,
-        message: MessageModel
+        chatId: String,
+        message: MessageUserDto
     ) {
-
-        val chatId = callbackQuery.message.chatId.toString()
-
         absSender.execute(
             createDialogMenu(
                 chatId,

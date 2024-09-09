@@ -1,211 +1,218 @@
 package com.example.demo_bot.view.bot
 
-import com.example.demo_bot.service.interfaces.AttributesService
-import com.example.demo_bot.service.interfaces.ExchangeLinkService
-import com.example.demo_bot.service.interfaces.GameLinkService
-import com.example.demo_bot.service.interfaces.SocialMediaLinkService
+import com.example.demo_bot.service.dto.MessagePhotoDto
+import com.example.demo_bot.service.dto.MessageUserDto
+import com.example.demo_bot.service.interfaces.*
 import com.example.demo_bot.view.handler.MyCallbackHandlerBot
 import com.example.demo_bot.view.learn_bot.createMessage
-import com.example.demo_bot.view.model.ExchangeAttributes
-import com.example.demo_bot.view.model.enums.HandlerName
 import com.example.demo_bot.view.model.MessageModel
+import com.example.demo_bot.view.model.enums.HandlerName
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot
-import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand
+
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
+import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands
+import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup
 import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
+import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault
 
 @Component
 class SK_Bot(
-    commands: Set<BotCommand>,
+    //   commands: List<BotCommand>,
     callbackHandlers: Set<MyCallbackHandlerBot>,
     @Value("\${telegram.token}")
     token: String,
+    commands: ArrayList<BotCommand>,
     private val exchangeLinkService: ExchangeLinkService,
     private val atrService: AttributesService,
     private val gameLinkService: GameLinkService,
     private val socialMediaLinkService: SocialMediaLinkService,
+    private val userService: UserService,
+    private val messageUserService: MessageUserService,
+    private val messagePhotoService: MessagePhotoService,
 ) : TelegramLongPollingCommandBot(token) {
 
     @Value("\${telegram.botName}")
     private val botName: String = ""
     private lateinit var handlerMapping: Map<String, MyCallbackHandlerBot>
-    private var fromHandler: String = ""
+    // private lateinit var commands: ArrayList<BotCommand>
 
-//    private var messageToSend: String = ""
 
-    var myMessage = MessageModel("", "", "", "", "", "")
-
-    //    private var gameLink: String = ""
-//    private val game = GameNameAttributes()
-    private val exchange = ExchangeAttributes()
-
-    //val list :List<BotCommand> = listOf(BotCommand("/start",""))
     init {
-        registerAll(*commands.toTypedArray())
+        commands.add(BotCommand("/start", "Start"))
+        //     registerAll(*commands.toTypedArray())
         handlerMapping = callbackHandlers.associateBy { it.name.text }
-        //this.execute(SetMyCommands(List<BotCommand>))
+        this.execute(SetMyCommands(commands, BotCommandScopeDefault(), null))
     }
 
     override fun getBotUsername(): String = botName
 
     override fun processNonCommandUpdate(update: Update) {
 
+
         if (update.hasMessage()) {
-            val chatId = update.message.chatId.toString()
-            if (update.message.hasText() && fromHandler == HandlerName.CREATE_MESSAGE.text)
-                myMessage.text = update.message.text
-            else if (update.message.hasText()) {
-                execute(createMessage(chatId, "Вы написали: *${update.message.text}*"))
-            } else {
-                execute(createMessage(chatId, "Я понимаю только текст!"))
+
+            val userId = update.message.from.id
+
+            if (userId.toInt() == userService.getByUserById(userId.toInt()).id) {
+                val myMessage = messageUserService.getMessageByUserId(userId.toInt())
+                val chatId = update.message.chatId.toString()
+
+                if (update.message.text == "/start") {
+                    myMessage.fromHandler = ""
+                    handlerMapping.getValue(HandlerName.START_HANDLER.text)
+                        .myProcessCallbackData(
+                            absSender = this,
+                            chatId = chatId,
+                            myMessage
+                        )
+                } else if (update.message.hasText() && myMessage.fromHandler == HandlerName.CREATE_MESSAGE.text) {
+                    myMessage.text = update.message.text
+                    messageUserService.update(userId.toInt(), myMessage)
+                } else if (update.message.hasText() && update.message.hasPhoto()) {
+                    myMessage.text = update.message.text
+                    val listPhotos  = emptyList<MessagePhotoDto>()
+                    listPhotos.map { update.message.photo }
+                    myMessage.listPhoto = listPhotos
+                    messageUserService.update(userId.toInt(), myMessage)
+
+                } else if (update.message.hasText()) {
+                    execute(createMessage(chatId, "Вы написали: *${update.message.text}*"))
+                } else if (update.message.hasPhoto()) {
+                    val listPhotos  = listOf(
+                    MessagePhotoDto(
+                        telegramFileId = update.message.photo[2].fileId,
+                        fileSize = update.message.photo[2].fileSize
+                    ))
+
+                    myMessage.listPhoto = listPhotos
+                    messageUserService.update(userId.toInt(), myMessage)
+//                    val photoMessage = update.message.photo[1].fileId
+//                    val photo = MessagePhotoDto(1, photoMessage, update.message.photo[1].fileSize)
+//                    messagePhotoService.save(1, photo)
+                } else {
+                    execute(createMessage(chatId, "Я понимаю только текст!"))
+                    execute(SendMediaGroup())
+                }
             }
-        }
-        /**
-         * Здесь мы добавили новую проверку hasCallbackQuery(), внутри которой извлекаем контекст callbackData.
-         * Технически он представляет собой строку и вы можете поместить туда всё что угодно.
-         * Это именно тот самый контекст, которого нам не хватает в функционале обычных кнопок.
-         *
-         * Перед началом обработки запроса нам нужно отправить клиентскому приложению AnswerCallbackQuery.
-         * Мы как бы говорим, что запрос принят и мы начали его обработку. Если этого не сделать,
-         * то клиент будет видеть анимацию обработки запроса и подумает, что наше приложение «зависло».
-         *
-         * Далее начинаем извлекать информацию из callbackData. Формат может быть любым, но при этом должен быть
-         * единым для всех ваших callback-ов. Я здесь разделяю параметры вертикальной чертой,
-         * причём первым параметром всегда ставлю текстовое имя из HandlerName.
-         * По этому имени я извлекаю нужный обработчик из handlerMapping и передаю все остальные аргументы кроме
-         * первого внутрь этого обработчика.
-         */
-        else if (update.hasCallbackQuery()) {
+
+        } else if (update.hasCallbackQuery()) {
+
+            val userId = update.callbackQuery.from.id
+
+            if (userId.toInt() == userService.getByUserById(userId.toInt()).id) {
+                var myMessage = messageUserService.getMessageByUserId(userId.toInt())
+                val callbackQuery = update.callbackQuery
+                val callbackData = callbackQuery.data
+                val chatId = callbackQuery.message?.chatId.toString()
+                val callbackQueryId = callbackQuery.id
+                //???
+                execute(AnswerCallbackQuery(callbackQueryId))
+
+                val callbackArguments = callbackData.split("|")
+                val callbackHandlerName = callbackArguments.first()
+
+                when (callbackHandlerName) {
+                    HandlerName.START_HANDLER.text ->{}
+                    HandlerName.CHANGE_ATTRIBUTES.text -> {
 
 
-            val callbackQuery = update.callbackQuery
-            val callbackData = callbackQuery.data
-            // var messageToSens = ""
-
-            val callbackQueryId = callbackQuery.id
-            execute(AnswerCallbackQuery(callbackQueryId))
-
-            val callbackArguments = callbackData.split("|")
-            val callbackHandlerName = callbackArguments.first()
-
-            //Формируем сообщение перед отправкой
-//            if (callbackHandlerName == HandlerName.SEND_MESSAGE.text) {
-//                //  messageToSens = myMessage
-//                myMessage.text = messageToSend
-//            }
-            //вроде всегда 3
-            //создаем ссылку на игру из ежедневного задания
-//            if (callbackArguments.size == 3 && callbackArguments[2] == "daily_tasks_in_games") {
-//                val link = findNameGameAndLink(callbackArguments[1],game)
-//                gameLink = ""
-//                gameLink= "$link - начни играть прямо сейчас!!!"
-//            }
-            //вроде всегда 3
-            //создаем ссылку на биржу из события на криптобирже
-//            if (callbackArguments.size == 3 && callbackArguments[2] == "new_event_on_crypto") {
-//                val exchange = exchangeLinkService.getByName(callbackArguments[1])
-//                val link = "[${exchange.name}](${exchange.link})"
-//                //            val link = getExchangeName(callbackArguments[1],exchange)
-//                //gameLink = ""
-//                myMessage.socialLink =
-//                    "$link - регистрируйся прямо сейчас и получай крутой бонус по моей реферальной ссылке!!!"
-//            }
-
-            //срабатывает всегда, если это не отправка готового сообщения
-//            if (myMessage.text == "") {
-//                handlerMapping.getValue(callbackHandlerName)
-//                    .myProcessCallbackData(
-//                        absSender = this,
-//                        callbackQuery = callbackQuery,
-//                        arguments = callbackArguments.subList(1, callbackArguments.size),
-//                        message = myMessage,
-//                        link = gameLink
-//                    )
-            //срабатывает при отправке готового сообщения
-            //           } else {
-
-            when (callbackHandlerName) {
-                HandlerName.CHANGE_ATTRIBUTES.text -> {}
-                HandlerName.CREATE_POST_MENU.text -> {
-                    fromHandler = ""
-                    when (callbackArguments[1]) {
-                        HandlerName.CREATE_POST_ABOUT_CRYPTO.text -> myMessage.fromHandler =
-                            HandlerName.CREATE_POST_ABOUT_CRYPTO.text
-
-                        HandlerName.INVITE_NEW_GAME.text -> myMessage.fromHandler = HandlerName.INVITE_NEW_GAME.text
-                        HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> myMessage.fromHandler =
-                            HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text
-
-                        HandlerName.DAILY_TASKS_IN_GAMES.text -> myMessage.fromHandler =
-                            HandlerName.DAILY_TASKS_IN_GAMES.text
                     }
-                }
+                    HandlerName.CREATE_POST_MENU.text -> {
 
-                HandlerName.CREATE_POST_ABOUT_CRYPTO.text -> {
-                    myMessage.fromHandler = HandlerName.CREATE_POST_ABOUT_CRYPTO.text
-                    getHashTage(HandlerName.CREATE_POST_ABOUT_CRYPTO.text)
-                }
+                        myMessage = MessageUserDto(
+                            title = "",
+                            text = "",
+                            link = "",
+                            hashTage = "",
+                            socialLink = "",
+                            fromHandler = "",
+                            listPhoto = emptyList()
+                        )
+  //                      myMessage.fromHandler = ""
+                        when (callbackArguments[1]) {
+                            HandlerName.CREATE_POST_ABOUT_CRYPTO.text -> myMessage.fromHandler =
+                                HandlerName.CREATE_POST_ABOUT_CRYPTO.text
 
-                HandlerName.INVITE_NEW_GAME.text -> {
-                    myMessage.fromHandler = HandlerName.INVITE_NEW_GAME.text
-                    getHashTage(HandlerName.INVITE_NEW_GAME.text)
-                }
+                            HandlerName.INVITE_NEW_GAME.text -> myMessage.fromHandler = HandlerName.INVITE_NEW_GAME.text
+                            HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> myMessage.fromHandler =
+                                HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text
 
-                HandlerName.DAILY_TASKS_IN_GAMES.text -> {
-                    myMessage.fromHandler = HandlerName.DAILY_TASKS_IN_GAMES.text
-                    getHashTage(HandlerName.DAILY_TASKS_IN_GAMES.text)
-                }
-
-                HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> {
-                    myMessage.fromHandler = HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text
-                    getHashTage(HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text)
-                }
-
-                HandlerName.CREATE_MESSAGE.text -> {
-                    fromHandler = HandlerName.CREATE_MESSAGE.text
-                    if (callbackArguments[1] != "empty") {
-                        when (myMessage.fromHandler) {
-                            HandlerName.DAILY_TASKS_IN_GAMES.text -> {
-                                val dto = gameLinkService.getByName(callbackArguments[1])
-                                myMessage.link = "[${dto.name}]${dto.link} - начни играть прямо сейчас!!!"
-                            }
-
-                            HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> {
-                                val dto = exchangeLinkService.getByName(callbackArguments[1])
-                                myMessage.link = "[${dto.name}](${dto.link}) - регистрируйся прямо сейчас и получай крутой бонус по моей реферальной ссылке!!!"
-                            }
+                            HandlerName.DAILY_TASKS_IN_GAMES.text -> myMessage.fromHandler =
+                                HandlerName.DAILY_TASKS_IN_GAMES.text
                         }
                     }
+
+                    HandlerName.CREATE_POST_ABOUT_CRYPTO.text -> {
+                        myMessage.fromHandler = HandlerName.CREATE_POST_ABOUT_CRYPTO.text
+                        getHashTage(HandlerName.CREATE_POST_ABOUT_CRYPTO.text, myMessage)
+                    }
+
+                    HandlerName.INVITE_NEW_GAME.text -> {
+                        myMessage.fromHandler = HandlerName.INVITE_NEW_GAME.text
+                        getHashTage(HandlerName.INVITE_NEW_GAME.text, myMessage)
+                    }
+
+                    HandlerName.DAILY_TASKS_IN_GAMES.text -> {
+                        myMessage.fromHandler = HandlerName.DAILY_TASKS_IN_GAMES.text
+                        getHashTage(HandlerName.DAILY_TASKS_IN_GAMES.text, myMessage)
+                    }
+
+                    HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> {
+                        myMessage.fromHandler = HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text
+                        getHashTage(HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text, myMessage)
+                    }
+
+                    HandlerName.CREATE_MESSAGE.text -> {
+//                        val fromHandler = HandlerName.CREATE_MESSAGE.text
+                        if (callbackArguments[1] != "empty") {
+                            when (myMessage.fromHandler) {
+                                HandlerName.DAILY_TASKS_IN_GAMES.text -> {
+                                    val dto = gameLinkService.getByName(callbackArguments[1])
+                                    myMessage.link = "[${dto.name}]${dto.link} - начни играть прямо сейчас!!!"
+                                }
+
+                                HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> {
+                                    val dto = exchangeLinkService.getByName(callbackArguments[1])
+                                    myMessage.link =
+                                        "[${dto.name}](${dto.link}) - регистрируйся прямо сейчас и получай крутой бонус по моей реферальной ссылке!!!"
+                                }
+                            }
+                        }
+                        myMessage.fromHandler = HandlerName.CREATE_MESSAGE.text
+                    }
+
+                    HandlerName.MESSAGE_SKETCH.text -> {
+                        myMessage.title = "[SKcrypto](https://t.me/DefiSKcrypto)"
+                        myMessage.socialLink = ""
+                        val dto = socialMediaLinkService.getAll()
+                        dto.forEach { myMessage.socialLink += "[${it.name}](${it.link}) " }
+
+                    }
+
+                    HandlerName.SEND_MESSAGE.text -> {}
                 }
+                messageUserService.update(userId.toInt(), myMessage)
 
-                HandlerName.MESSAGE_SKETCH.text -> {
-                    myMessage.title = "[SKcrypto](https://t.me/DefiSKcrypto)"
-                    val dto = socialMediaLinkService.getAll()
-                    dto.forEach { myMessage.socialLink += "[${it.name}](${it.link}) " }
 
-                }
-
-                HandlerName.SEND_MESSAGE.text -> {}
+                handlerMapping.getValue(callbackHandlerName)
+                    .myProcessCallbackData(
+                        absSender = this,
+                        chatId = chatId,
+                        myMessage
+                    )
             }
-
-
-
-            handlerMapping.getValue(callbackHandlerName)
-                .myProcessCallbackData(
-                    absSender = this,
-                    callbackQuery = callbackQuery,
-                    myMessage
-                )
         }
     }
 
-    fun getHashTage(param: String) {
+    fun getHashTage(param: String, message: MessageUserDto) {
         val dto = atrService.getByName(param)
-        myMessage.hashTags = "${dto.attribute1} ${dto.attribute2} ${dto.attribute3} ${dto.attribute4} ${dto.attribute5}"
-
+        message.hashTage = "${dto.attribute1} ${dto.attribute2} ${dto.attribute3} ${dto.attribute4} ${dto.attribute5}"
     }
 
-
+    private fun registerNewUser(id: Int, firstName: String, lastName: String, userName: String) {
+        userService
+    }
 }

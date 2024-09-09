@@ -1,6 +1,7 @@
 package com.example.demo_bot.view.model.enums
 
 enum class HandlerName(val text: String) {
+    START_HANDLER("start_bot"),
     CREATE_POST_MENU("create_post_menu"),
     INVITE_NEW_GAME("invite_new_game"),
     MESSAGE_SKETCH("create_new_post_by_crypto"),

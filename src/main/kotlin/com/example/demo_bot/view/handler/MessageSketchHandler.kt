@@ -1,15 +1,18 @@
 package com.example.demo_bot.view.handler
 
+import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.service.interfaces.SocialMediaLinkService
 import com.example.demo_bot.view.learn_bot.createMessage
-import com.example.demo_bot.view.learn_bot.getInlineKeyboard
 import com.example.demo_bot.view.model.BotAttributes
 import com.example.demo_bot.view.model.enums.HandlerName
 import com.example.demo_bot.util.*
-import com.example.demo_bot.view.model.MessageModel
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery
+import org.telegram.telegrambots.meta.api.methods.ForwardMessage
+import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
+import org.telegram.telegrambots.meta.api.objects.InputFile
+import org.telegram.telegrambots.meta.api.objects.media.InputMedia
+import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
@@ -20,7 +23,8 @@ class MessageSketchHandler(
 
 
     override val name: HandlerName = HandlerName.MESSAGE_SKETCH
-//    lateinit var list: List<String>
+
+    //    lateinit var list: List<String>
     lateinit var attributesLink: String
 
     val callbackSend = HandlerName.SEND_MESSAGE.text
@@ -28,11 +32,10 @@ class MessageSketchHandler(
     private val socialLink = socialMediaLinkService.getAll()
 
     override fun myProcessCallbackData(
-        absSender: AbsSender, callbackQuery: CallbackQuery, message: MessageModel,
-    ) {
-        //       val fromHandlerName = arguments[1]
-        val chatId = callbackQuery.message.chatId.toString()
-        //val messageUser = callbackQuery.message.text.toString()
+        absSender: AbsSender,
+        chatId: String,
+        message: MessageUserDto,
+    ) {//val messageUser = callbackQuery.message.text.toString()
 
 //        //???????????????
 //        absSender.execute(
@@ -44,7 +47,7 @@ class MessageSketchHandler(
 //            )
 //        )
 
-        if (message.text.isEmpty()) {
+        if (message.text.isEmpty() && message.listPhoto.isEmpty()) {
             absSender.execute(createMessage(chatId, "Вы не ввели сообщение!!!"))
 //            absSender.execute(
 //                createDialogMenu(
@@ -72,6 +75,37 @@ class MessageSketchHandler(
 //                    fromHandlerName = getFromHandlerName(fromHandlerName)
                 )
             )
+            if (message.listPhoto.isNotEmpty()) {
+
+                val list: List<InputMedia> = listOf(
+                    InputMediaPhoto(message.listPhoto[0].telegramFileId),
+                   // message.text
+                )
+
+                absSender.execute(SendMediaGroup(
+                    chatId, list))
+                absSender.execute(ForwardMessage())
+
+//                bot.sendMediaGroup(
+//                    chatId = ChatId.fromId(message.chat.id),
+//                    mediaGroup = MediaGroup.from(
+//                        InputMediaPhoto(
+//                            media = ByUrl("https://www.sngular.com/wp-content/uploads/2019/11/Kotlin-Blog-1400x411.png"),
+//                            caption = "I come from an url :P",
+//                        ),
+//                        InputMediaPhoto(
+//                            media = ByUrl("https://www.sngular.com/wp-content/uploads/2019/11/Kotlin-Blog-1400x411.png"),
+//                            caption = "Me too!",
+//                        ),
+//                    ),
+//                    replyToMessageId = message.messageId,
+//                )
+//
+//                message.listPhoto.forEach {
+//                    val photo = InputFile(it.telegramFileId)
+//                    absSender.execute(SendPhoto(chatId, photo))
+//                }
+            }
         }
     }
 
@@ -82,7 +116,7 @@ class MessageSketchHandler(
 //        const val dailyTaskInGames = "daily_task_in_games"
 //    }
 
-    private fun getTextMessage(message: MessageModel) =
+    private fun getTextMessage(message: MessageUserDto) =
         if (message.link == "") {
             previewMessage(message)
         } else {

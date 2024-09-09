@@ -2,6 +2,7 @@ package com.example.demo_bot.view.handler
 
 import com.example.demo_bot.service.dto.ExchangeLinkDto
 import com.example.demo_bot.service.dto.GameLinkDto
+import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.service.interfaces.GameLinkService
 import com.example.demo_bot.service.repository.GamesLinkRepository
 import com.example.demo_bot.view.model.enums.CommandName
@@ -89,12 +90,9 @@ class DailyTaskInGames(
 
     override fun myProcessCallbackData(
         absSender: AbsSender,
-        callbackQuery: CallbackQuery,
-        message: MessageModel,
+        chatId: String,
+        message: MessageUserDto,
     ) {
-
-        val chatId = callbackQuery.message.chatId.toString()
-
         absSender.execute(
             createDialogMenu(
                 chatId,

@@ -1,5 +1,6 @@
 package com.example.demo_bot.view.handler
 
+import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.view.model.MessageModel
 import com.example.demo_bot.view.model.enums.HandlerName
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
@@ -11,7 +12,7 @@ interface MyCallbackHandlerBot {
 
     fun myProcessCallbackData(
         absSender: AbsSender,
-        callbackQuery: CallbackQuery,
-        message: MessageModel,
+        chatId: String,
+        message: MessageUserDto,
     )
 }

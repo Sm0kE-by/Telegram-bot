@@ -1,6 +1,7 @@
 package com.example.demo_bot.view.handler
 
 import com.example.demo_bot.service.dto.ExchangeLinkDto
+import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.service.interfaces.ExchangeLinkService
 import com.example.demo_bot.view.model.enums.HandlerName
 import com.example.demo_bot.util.createDialogMenu
@@ -22,12 +23,9 @@ class NewEventOnCryptoExchangeHandler(
 
     override fun myProcessCallbackData(
         absSender: AbsSender,
-        callbackQuery: CallbackQuery,
-        message: MessageModel,
+        chatId: String,
+        message: MessageUserDto,
     ) {
-
-        val chatId = callbackQuery.message.chatId.toString()
-
         absSender.execute(
             createDialogMenu(
                 chatId,
