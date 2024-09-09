@@ -3,7 +3,7 @@ create table attributes
     id         serial
         constraint country_pk
             primary key,
-    name  varchar not null,
+    name       varchar not null,
     attribute1 varchar not null,
     attribute2 varchar not null,
     attribute3 varchar not null,
