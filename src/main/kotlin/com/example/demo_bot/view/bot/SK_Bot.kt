@@ -56,10 +56,12 @@ class SK_Bot(
 
             val userId = update.message.from.id
 
+            //Проверка юзера
             if (userId.toInt() == userService.getByUserById(userId.toInt()).id) {
                 val myMessage = messageUserService.getMessageByUserId(userId.toInt())
                 val chatId = update.message.chatId.toString()
 
+                //Проверка команд
                 if (update.message.text == "/start") {
                     myMessage.fromHandler = ""
                     handlerMapping.getValue(HandlerName.START_HANDLER.text)
@@ -68,34 +70,40 @@ class SK_Bot(
                             chatId = chatId,
                             myMessage
                         )
+                    //Проверка наличия текста в диалоге CREATE_MESSAGE
                 } else if (update.message.hasText() && myMessage.fromHandler == HandlerName.CREATE_MESSAGE.text) {
                     myMessage.text = update.message.text
-                    messageUserService.update(userId.toInt(), myMessage)
-                } else if (update.message.hasText() && update.message.hasPhoto()) {
-                    myMessage.text = update.message.text
-                    val listPhotos  = emptyList<MessagePhotoDto>()
-                    listPhotos.map { update.message.photo }
-                    myMessage.listPhoto = listPhotos
-                    messageUserService.update(userId.toInt(), myMessage)
-
+ //                   messageUserService.update(userId.toInt(), myMessage)
+                    //Переделать!!!!!!!!!!!!!!!!!!!!
                 } else if (update.message.hasText()) {
                     execute(createMessage(chatId, "Вы написали: *${update.message.text}*"))
+                    //Если просто фото (надо проверить на наличие заголовка)
                 } else if (update.message.hasPhoto()) {
-                    val listPhotos  = listOf(
-                    MessagePhotoDto(
-                        telegramFileId = update.message.photo[2].fileId,
-                        fileSize = update.message.photo[2].fileSize
-                    ))
-
+                    val listPhotos = listOf(
+                        MessagePhotoDto(
+                            telegramFileId = update.message.photo[2].fileId,
+                            fileSize = update.message.photo[2].fileSize
+                        )
+                    )
+                    if (update.message.caption != null) myMessage.text = update.message.caption!!
                     myMessage.listPhoto = listPhotos
-                    messageUserService.update(userId.toInt(), myMessage)
-//                    val photoMessage = update.message.photo[1].fileId
-//                    val photo = MessagePhotoDto(1, photoMessage, update.message.photo[1].fileSize)
-//                    messagePhotoService.save(1, photo)
+ //                   messageUserService.update(userId.toInt(), myMessage)
+                } else if (update.message.mediaGroupId != null) {
+                    val listPhoto = ArrayList<MessagePhotoDto>()
+                    listPhoto.addAll(myMessage.listPhoto)
+                    listPhoto.add(
+                        MessagePhotoDto(
+                            telegramFileId = update.message.photo[2].fileId,
+                            fileSize = update.message.photo[2].fileSize
+                        )
+                    )
+                    if (update.message.caption != null) myMessage.text = update.message.caption!!
+                    myMessage.listPhoto = listPhoto
                 } else {
                     execute(createMessage(chatId, "Я понимаю только текст!"))
                     execute(SendMediaGroup())
                 }
+                messageUserService.update(userId.toInt(), myMessage)
             }
 
         } else if (update.hasCallbackQuery()) {
@@ -115,13 +123,9 @@ class SK_Bot(
                 val callbackHandlerName = callbackArguments.first()
 
                 when (callbackHandlerName) {
-                    HandlerName.START_HANDLER.text ->{}
-                    HandlerName.CHANGE_ATTRIBUTES.text -> {
-
-
-                    }
+                    HandlerName.START_HANDLER.text -> {}
+                    HandlerName.CHANGE_ATTRIBUTES.text -> {}
                     HandlerName.CREATE_POST_MENU.text -> {
-
                         myMessage = MessageUserDto(
                             title = "",
                             text = "",
@@ -131,7 +135,7 @@ class SK_Bot(
                             fromHandler = "",
                             listPhoto = emptyList()
                         )
-  //                      myMessage.fromHandler = ""
+                        //                      myMessage.fromHandler = ""
                         when (callbackArguments[1]) {
                             HandlerName.CREATE_POST_ABOUT_CRYPTO.text -> myMessage.fromHandler =
                                 HandlerName.CREATE_POST_ABOUT_CRYPTO.text
@@ -210,9 +214,5 @@ class SK_Bot(
     fun getHashTage(param: String, message: MessageUserDto) {
         val dto = atrService.getByName(param)
         message.hashTage = "${dto.attribute1} ${dto.attribute2} ${dto.attribute3} ${dto.attribute4} ${dto.attribute5}"
-    }
-
-    private fun registerNewUser(id: Int, firstName: String, lastName: String, userName: String) {
-        userService
     }
 }

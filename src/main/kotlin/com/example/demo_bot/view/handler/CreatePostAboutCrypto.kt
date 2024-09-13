@@ -2,10 +2,8 @@ package com.example.demo_bot.view.handler
 
 import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.view.model.enums.HandlerName
-import com.example.demo_bot.util.createDialogMenu
-import com.example.demo_bot.view.model.MessageModel
+import com.example.demo_bot.util.createTextDialogMenu
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
@@ -21,7 +19,7 @@ class CreatePostAboutCrypto  : MyCallbackHandlerBot {
         message: MessageUserDto
     ) {
         absSender.execute(
-            createDialogMenu(
+            createTextDialogMenu(
                 chatId,
                 "Вы выбрали пункт \"Создать пост о криптовалюте\" для продолжения нажмите \"Далее\"",
                 listOf(

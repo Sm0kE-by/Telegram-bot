@@ -4,10 +4,8 @@ import com.example.demo_bot.service.dto.ExchangeLinkDto
 import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.service.interfaces.ExchangeLinkService
 import com.example.demo_bot.view.model.enums.HandlerName
-import com.example.demo_bot.util.createDialogMenu
-import com.example.demo_bot.view.model.MessageModel
+import com.example.demo_bot.util.createTextDialogMenu
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 
@@ -27,7 +25,7 @@ class NewEventOnCryptoExchangeHandler(
         message: MessageUserDto,
     ) {
         absSender.execute(
-            createDialogMenu(
+            createTextDialogMenu(
                 chatId,
                 "Выберете криптобиржу",
                 getExchangeName(listExchange),

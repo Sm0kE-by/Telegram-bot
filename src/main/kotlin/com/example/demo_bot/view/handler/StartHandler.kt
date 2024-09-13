@@ -2,7 +2,7 @@ package com.example.demo_bot.view.handler
 
 import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.view.model.enums.HandlerName
-import com.example.demo_bot.util.createDialogMenu
+import com.example.demo_bot.util.createTextDialogMenu
 import org.springframework.stereotype.Component
 
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -21,7 +21,7 @@ class StartHandler : MyCallbackHandlerBot {
         message: MessageUserDto
     ) {
         absSender.execute(
-            createDialogMenu(
+            createTextDialogMenu(
                 chatId,
                 "Добро пожаловать в нашего бота! Выбирите одны из функций!",
                 listOf(

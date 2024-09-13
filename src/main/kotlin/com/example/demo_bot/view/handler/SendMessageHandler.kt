@@ -8,8 +8,6 @@ import com.example.demo_bot.view.model.BotAttributes
 import com.example.demo_bot.view.model.enums.HandlerName
 import com.example.demo_bot.util.*
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
-import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
@@ -46,7 +44,7 @@ class SendMessageHandler(
             )
         )
         absSender.execute(
-            createDialogMenu(
+            createTextDialogMenu(
                 chatId,
                 "Сообщение отправлено",
                 listOf(

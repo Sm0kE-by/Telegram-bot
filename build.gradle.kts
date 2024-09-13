@@ -27,7 +27,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.3.2")
-	implementation("org.postgresql:postgresql:42.6.0")
+	implementation("org.postgresql:postgresql:42.7.2")
 	compileOnly("org.projectlombok:lombok:1.18.34")
 
 	//implementation("org.springframework.cloud:spring-cloud-starter-bootstrap:4.1.4")
