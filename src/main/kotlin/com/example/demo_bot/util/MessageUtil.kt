@@ -63,8 +63,8 @@ fun createPhotosMessage(absSender: AbsSender, chatId: String, message: MessageUs
         ph.parseMode = "Markdown"
 
         if (message.text.isNotEmpty()) ph.caption = message.text
-        absSender.execute(ph)
-            .apply { replyMarkup = getInlineKeyboard(inlineButtons) }
+        absSender.execute(ph.apply { replyMarkup = getInlineKeyboard(inlineButtons) })
+
 
 
     } else if (message.listPhoto.size in 2..10) {
@@ -75,15 +75,20 @@ fun createPhotosMessage(absSender: AbsSender, chatId: String, message: MessageUs
                 val photo = InputMediaPhoto()
                 photo.media = message.listPhoto[i].telegramFileId
                 photo.caption = message.text
+                photo.parseMode = "Markdown"
                 list.add(
                     photo
                 )
-            } else InputMediaPhoto(message.listPhoto[i].telegramFileId)
+            } else list.add(InputMediaPhoto(message.listPhoto[i].telegramFileId))
         }
         val listPh = SendMediaGroup()
         listPh.chatId = chatId
         listPh.medias = list
         absSender.execute(listPh)
+        absSender.execute(SendMessage(chatId,"Отправить данное сообщение?")
+            .apply { replyMarkup = getInlineKeyboard(inlineButtons) }
+            .apply { enableMarkdown(true) }
+            .apply { disableWebPagePreview() })
 
         //       bot.sendMediaGroup(
 //                    chatId = ChatId.fromId(message.chat.id),

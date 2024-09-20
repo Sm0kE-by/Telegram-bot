@@ -78,7 +78,7 @@ class SK_Bot(
                 } else if (update.message.hasText()) {
                     execute(createMessage(chatId, "Вы написали: *${update.message.text}*"))
                     //Если просто фото (надо проверить на наличие заголовка)
-                } else if (update.message.hasPhoto()) {
+                } else if (update.message.hasPhoto() && update.message.mediaGroupId == null) {
                     val listPhotos = listOf(
                         MessagePhotoDto(
                             telegramFileId = update.message.photo[2].fileId,
