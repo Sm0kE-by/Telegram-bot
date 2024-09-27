@@ -3,10 +3,11 @@ package com.example.demo_bot.view.bot
 import com.example.demo_bot.service.dto.MessagePhotoDto
 import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.service.interfaces.*
-import com.example.demo_bot.view.handler.MyCallbackHandlerBot
+import com.example.demo_bot.view.handler.changeData.ChangeDataCallbackHandler
+import com.example.demo_bot.view.handler.createPost.CreatePostCallbackHandler
 import com.example.demo_bot.view.learn_bot.createMessage
-import com.example.demo_bot.view.model.MessageModel
-import com.example.demo_bot.view.model.enums.HandlerName
+import com.example.demo_bot.view.model.enums.ChangeDateHandlerName
+import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot
@@ -21,7 +22,8 @@ import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope
 @Component
 class SK_Bot(
     //   commands: List<BotCommand>,
-    callbackHandlers: Set<MyCallbackHandlerBot>,
+    callbackHandlers: Set<CreatePostCallbackHandler>,
+    callbackHandlers2: Set<ChangeDataCallbackHandler>,
     @Value("\${telegram.token}")
     token: String,
     commands: ArrayList<BotCommand>,
@@ -36,7 +38,8 @@ class SK_Bot(
 
     @Value("\${telegram.botName}")
     private val botName: String = ""
-    private lateinit var handlerMapping: Map<String, MyCallbackHandlerBot>
+    private lateinit var handlerMapping: Map<String, CreatePostCallbackHandler>
+    private lateinit var handlerMapping2: Map<String, ChangeDataCallbackHandler>
     // private lateinit var commands: ArrayList<BotCommand>
 
 
@@ -44,6 +47,7 @@ class SK_Bot(
         commands.add(BotCommand("/start", "Start"))
         //     registerAll(*commands.toTypedArray())
         handlerMapping = callbackHandlers.associateBy { it.name.text }
+        handlerMapping2 = callbackHandlers2.associateBy { it.name.text }
         this.execute(SetMyCommands(commands, BotCommandScopeDefault(), null))
     }
 
@@ -64,16 +68,16 @@ class SK_Bot(
                 //Проверка команд
                 if (update.message.text == "/start") {
                     myMessage.fromHandler = ""
-                    handlerMapping.getValue(HandlerName.START_HANDLER.text)
+                    handlerMapping.getValue(CreatePostHandlerName.START_HANDLER.text)
                         .myProcessCallbackData(
                             absSender = this,
                             chatId = chatId,
                             myMessage
                         )
                     //Проверка наличия текста в диалоге CREATE_MESSAGE
-                } else if (update.message.hasText() && myMessage.fromHandler == HandlerName.CREATE_MESSAGE.text) {
+                } else if (update.message.hasText() && myMessage.fromHandler == CreatePostHandlerName.CREATE_MESSAGE.text) {
                     myMessage.text = update.message.text
- //                   messageUserService.update(userId.toInt(), myMessage)
+                    //                   messageUserService.update(userId.toInt(), myMessage)
                     //Переделать!!!!!!!!!!!!!!!!!!!!
                 } else if (update.message.hasText()) {
                     execute(createMessage(chatId, "Вы написали: *${update.message.text}*"))
@@ -87,7 +91,7 @@ class SK_Bot(
                     )
                     if (update.message.caption != null) myMessage.text = update.message.caption!!
                     myMessage.listPhoto = listPhotos
- //                   messageUserService.update(userId.toInt(), myMessage)
+                    //                   messageUserService.update(userId.toInt(), myMessage)
                 } else if (update.message.mediaGroupId != null) {
                     val listPhoto = ArrayList<MessagePhotoDto>()
                     listPhoto.addAll(myMessage.listPhoto)
@@ -123,9 +127,9 @@ class SK_Bot(
                 val callbackHandlerName = callbackArguments.first()
 
                 when (callbackHandlerName) {
-                    HandlerName.START_HANDLER.text -> {}
-                    HandlerName.CHANGE_ATTRIBUTES.text -> {}
-                    HandlerName.CREATE_POST_MENU.text -> {
+                    CreatePostHandlerName.START_HANDLER.text -> {}
+                    ChangeDateHandlerName.CHANGE_DATA_MENU.text -> {}
+                    CreatePostHandlerName.CREATE_POST_MENU.text -> {
                         myMessage = MessageUserDto(
                             title = "",
                             text = "",
@@ -137,58 +141,60 @@ class SK_Bot(
                         )
                         //                      myMessage.fromHandler = ""
                         when (callbackArguments[1]) {
-                            HandlerName.CREATE_POST_ABOUT_CRYPTO.text -> myMessage.fromHandler =
-                                HandlerName.CREATE_POST_ABOUT_CRYPTO.text
+                            CreatePostHandlerName.CREATE_POST_ABOUT_CRYPTO.text -> myMessage.fromHandler =
+                                CreatePostHandlerName.CREATE_POST_ABOUT_CRYPTO.text
 
-                            HandlerName.INVITE_NEW_GAME.text -> myMessage.fromHandler = HandlerName.INVITE_NEW_GAME.text
-                            HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> myMessage.fromHandler =
-                                HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text
+                            CreatePostHandlerName.INVITE_NEW_GAME.text -> myMessage.fromHandler =
+                                CreatePostHandlerName.INVITE_NEW_GAME.text
 
-                            HandlerName.DAILY_TASKS_IN_GAMES.text -> myMessage.fromHandler =
-                                HandlerName.DAILY_TASKS_IN_GAMES.text
+                            CreatePostHandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> myMessage.fromHandler =
+                                CreatePostHandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text
+
+                            CreatePostHandlerName.DAILY_TASKS_IN_GAMES.text -> myMessage.fromHandler =
+                                CreatePostHandlerName.DAILY_TASKS_IN_GAMES.text
                         }
                     }
 
-                    HandlerName.CREATE_POST_ABOUT_CRYPTO.text -> {
-                        myMessage.fromHandler = HandlerName.CREATE_POST_ABOUT_CRYPTO.text
-                        getHashTage(HandlerName.CREATE_POST_ABOUT_CRYPTO.text, myMessage)
+                    CreatePostHandlerName.CREATE_POST_ABOUT_CRYPTO.text -> {
+                        myMessage.fromHandler = CreatePostHandlerName.CREATE_POST_ABOUT_CRYPTO.text
+                        getHashTage(CreatePostHandlerName.CREATE_POST_ABOUT_CRYPTO.text, myMessage)
                     }
 
-                    HandlerName.INVITE_NEW_GAME.text -> {
-                        myMessage.fromHandler = HandlerName.INVITE_NEW_GAME.text
-                        getHashTage(HandlerName.INVITE_NEW_GAME.text, myMessage)
+                    CreatePostHandlerName.INVITE_NEW_GAME.text -> {
+                        myMessage.fromHandler = CreatePostHandlerName.INVITE_NEW_GAME.text
+                        getHashTage(CreatePostHandlerName.INVITE_NEW_GAME.text, myMessage)
                     }
 
-                    HandlerName.DAILY_TASKS_IN_GAMES.text -> {
-                        myMessage.fromHandler = HandlerName.DAILY_TASKS_IN_GAMES.text
-                        getHashTage(HandlerName.DAILY_TASKS_IN_GAMES.text, myMessage)
+                    CreatePostHandlerName.DAILY_TASKS_IN_GAMES.text -> {
+                        myMessage.fromHandler = CreatePostHandlerName.DAILY_TASKS_IN_GAMES.text
+                        getHashTage(CreatePostHandlerName.DAILY_TASKS_IN_GAMES.text, myMessage)
                     }
 
-                    HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> {
-                        myMessage.fromHandler = HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text
-                        getHashTage(HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text, myMessage)
+                    CreatePostHandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> {
+                        myMessage.fromHandler = CreatePostHandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text
+                        getHashTage(CreatePostHandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text, myMessage)
                     }
 
-                    HandlerName.CREATE_MESSAGE.text -> {
+                    CreatePostHandlerName.CREATE_MESSAGE.text -> {
 //                        val fromHandler = HandlerName.CREATE_MESSAGE.text
                         if (callbackArguments[1] != "empty") {
                             when (myMessage.fromHandler) {
-                                HandlerName.DAILY_TASKS_IN_GAMES.text -> {
+                                CreatePostHandlerName.DAILY_TASKS_IN_GAMES.text -> {
                                     val dto = gameLinkService.getByName(callbackArguments[1])
                                     myMessage.link = "[${dto.name}]${dto.link} - начни играть прямо сейчас!!!"
                                 }
 
-                                HandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> {
+                                CreatePostHandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> {
                                     val dto = exchangeLinkService.getByName(callbackArguments[1])
                                     myMessage.link =
                                         "[${dto.name}](${dto.link}) - регистрируйся прямо сейчас и получай крутой бонус по моей реферальной ссылке!!!"
                                 }
                             }
                         }
-                        myMessage.fromHandler = HandlerName.CREATE_MESSAGE.text
+                        myMessage.fromHandler = CreatePostHandlerName.CREATE_MESSAGE.text
                     }
 
-                    HandlerName.MESSAGE_SKETCH.text -> {
+                    CreatePostHandlerName.MESSAGE_SKETCH.text -> {
                         myMessage.title = "[SKcrypto](https://t.me/DefiSKcrypto)"
                         myMessage.socialLink = ""
                         val dto = socialMediaLinkService.getAll()
@@ -196,17 +202,24 @@ class SK_Bot(
 
                     }
 
-                    HandlerName.SEND_MESSAGE.text -> {}
+                    CreatePostHandlerName.SEND_MESSAGE.text -> {}
                 }
                 messageUserService.update(userId.toInt(), myMessage)
 
-
-                handlerMapping.getValue(callbackHandlerName)
-                    .myProcessCallbackData(
-                        absSender = this,
-                        chatId = chatId,
-                        myMessage
-                    )
+                if (handlerMapping.containsKey(callbackHandlerName))
+                    handlerMapping.getValue(callbackHandlerName)
+                        .myProcessCallbackData(
+                            absSender = this,
+                            chatId = chatId,
+                            myMessage
+                        )
+                else if (handlerMapping2.containsKey(callbackHandlerName))
+                    handlerMapping2.getValue(callbackHandlerName)
+                        .myProcessCallbackData(
+                            absSender = this,
+                            chatId = chatId,
+                            fromHandler = callbackArguments[1]
+                        )
             }
         }
     }

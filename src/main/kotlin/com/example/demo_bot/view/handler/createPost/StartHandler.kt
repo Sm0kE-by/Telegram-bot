@@ -1,19 +1,20 @@
-package com.example.demo_bot.view.handler
+package com.example.demo_bot.view.handler.createPost
 
 import com.example.demo_bot.service.dto.MessageUserDto
-import com.example.demo_bot.view.model.enums.HandlerName
+import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import com.example.demo_bot.util.createTextDialogMenu
+import com.example.demo_bot.view.model.enums.ChangeDateHandlerName
 import org.springframework.stereotype.Component
 
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class StartHandler : MyCallbackHandlerBot {
+class StartHandler : CreatePostCallbackHandler {
 
-    val callbackCreatePost = HandlerName.CREATE_POST_MENU.text
-    val callbackChangeAttributes = HandlerName.CHANGE_ATTRIBUTES.text
+    val callbackCreatePost = CreatePostHandlerName.CREATE_POST_MENU.text
+    val callbackChangeAttributes = ChangeDateHandlerName.CHANGE_DATA_MENU.text
 
-    override val name: HandlerName = HandlerName.START_HANDLER
+    override val name: CreatePostHandlerName = CreatePostHandlerName.START_HANDLER
 
     override fun myProcessCallbackData(
         absSender: AbsSender,
