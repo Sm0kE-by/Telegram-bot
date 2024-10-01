@@ -6,7 +6,7 @@ import com.example.demo_bot.service.interfaces.*
 import com.example.demo_bot.view.handler.changeData.ChangeDataCallbackHandler
 import com.example.demo_bot.view.handler.createPost.CreatePostCallbackHandler
 import com.example.demo_bot.view.learn_bot.createMessage
-import com.example.demo_bot.view.model.enums.ChangeDateHandlerName
+import com.example.demo_bot.view.model.enums.ChangeDataHandlerName
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -128,7 +128,7 @@ class SK_Bot(
 
                 when (callbackHandlerName) {
                     CreatePostHandlerName.START_HANDLER.text -> {}
-                    ChangeDateHandlerName.CHANGE_DATA_MENU.text -> {}
+                    ChangeDataHandlerName.CHANGE_DATA_MENU.text -> {}
                     CreatePostHandlerName.CREATE_POST_MENU.text -> {
                         myMessage = MessageUserDto(
                             title = "",
@@ -218,8 +218,7 @@ class SK_Bot(
                         .myProcessCallbackData(
                             absSender = this,
                             chatId = chatId,
-                            fromHandler = callbackArguments[1]
-                        )
+                                                    )
             }
         }
     }

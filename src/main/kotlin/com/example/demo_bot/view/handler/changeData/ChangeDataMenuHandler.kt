@@ -1,7 +1,7 @@
 package com.example.demo_bot.view.handler.changeData
 
 import com.example.demo_bot.util.createTextDialogMenu
-import com.example.demo_bot.view.model.enums.ChangeDateHandlerName
+import com.example.demo_bot.view.model.enums.ChangeDataHandlerName
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -9,17 +9,17 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 @Component
 class ChangeDataMenuHandler : ChangeDataCallbackHandler {
 
-    override val name: ChangeDateHandlerName = ChangeDateHandlerName.CHANGE_DATA_MENU
+    override val name: ChangeDataHandlerName = ChangeDataHandlerName.CHANGE_DATA_MENU
 
-    val callbackCRUDMenu = ChangeDateHandlerName.CRUD_MENU.text
+    val callbackCRUDMenu = ChangeDataHandlerName.CRUD_MENU.text
 
-    val callbackChangeAttributesMenu = ChangeDateHandlerName.CHANGE_ATTRIBUTES.text
-    val callbackChangeExchangeMenu = ChangeDateHandlerName.CHANGE_EXCHANGE.text
-    val callbackChangeGameMenu = ChangeDateHandlerName.CHANGE_GAME.text
-    val callbackChangeSocialMediaMenu = ChangeDateHandlerName.CHANGE_SOCIAL_MEDIA.text
+    val callbackChangeAttributesMenu = ChangeDataHandlerName.CHANGE_ATTRIBUTES.text
+    val callbackChangeExchangeMenu = ChangeDataHandlerName.CHANGE_EXCHANGE.text
+    val callbackChangeGameMenu = ChangeDataHandlerName.CHANGE_GAME.text
+    val callbackChangeSocialMediaMenu = ChangeDataHandlerName.CHANGE_SOCIAL_MEDIA.text
     val callbackBack = CreatePostHandlerName.START_HANDLER.text
 
-    override fun myProcessCallbackData(absSender: AbsSender, chatId: String, fromHandler: String) {
+    override fun myProcessCallbackData(absSender: AbsSender, chatId: String) {
         absSender.execute(
             createTextDialogMenu(
                 chatId,
