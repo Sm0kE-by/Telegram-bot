@@ -17,7 +17,7 @@ class CRUDExchangeCallbackHandler : ChangeDataCallbackHandler {
     val callbackDeleteData = ChangeDataHandlerName.DELETE_DATA_EXCHANGE.text
     val callbackBack = ChangeDataHandlerName.CHANGE_DATA_MENU.text
 
-    override fun myProcessCallbackData(absSender: AbsSender, chatId: String) {
+    override fun myProcessCallbackData(absSender: AbsSender, chatId: String, argument: String,) {
         absSender.execute(
             createTextDialogMenu(
                 chatId,

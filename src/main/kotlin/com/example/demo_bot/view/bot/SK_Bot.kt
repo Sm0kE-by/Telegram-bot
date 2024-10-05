@@ -6,6 +6,7 @@ import com.example.demo_bot.service.interfaces.*
 import com.example.demo_bot.view.handler.changeData.ChangeDataCallbackHandler
 import com.example.demo_bot.view.handler.createPost.CreatePostCallbackHandler
 import com.example.demo_bot.view.learn_bot.createMessage
+import com.example.demo_bot.view.model.ExchangeModel
 import com.example.demo_bot.view.model.enums.ChangeDataHandlerName
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import org.springframework.beans.factory.annotation.Value
@@ -77,8 +78,8 @@ class SK_Bot(
                     //Проверка наличия текста в диалоге CREATE_MESSAGE
                 } else if (update.message.hasText() && myMessage.fromHandler == CreatePostHandlerName.CREATE_MESSAGE.text) {
                     myMessage.text = update.message.text
-                    //                   messageUserService.update(userId.toInt(), myMessage)
-                    //Переделать!!!!!!!!!!!!!!!!!!!!
+                } else if (update.message.hasText() && myMessage.fromHandler == ChangeDataHandlerName.CREATE_DATA_MESSAGE.text) {
+                    myMessage.text = update.message.text
                 } else if (update.message.hasText()) {
                     execute(createMessage(chatId, "Вы написали: *${update.message.text}*"))
                     //Если просто фото (надо проверить на наличие заголовка)
@@ -128,7 +129,18 @@ class SK_Bot(
 
                 when (callbackHandlerName) {
                     CreatePostHandlerName.START_HANDLER.text -> {}
-                    ChangeDataHandlerName.CHANGE_DATA_MENU.text -> {}
+                    ChangeDataHandlerName.CHANGE_DATA_MENU.text -> {
+                        myMessage = MessageUserDto(
+                            title = "",
+                            text = "",
+                            link = "",
+                            hashTage = "",
+                            socialLink = "",
+                            fromHandler = "",
+                            listPhoto = emptyList()
+                        )
+                    }
+
                     CreatePostHandlerName.CREATE_POST_MENU.text -> {
                         myMessage = MessageUserDto(
                             title = "",
@@ -202,8 +214,19 @@ class SK_Bot(
 
                     }
 
-                    CreatePostHandlerName.SEND_MESSAGE.text -> {}
+                    //
+
+                    ChangeDataHandlerName.CREATE_DATA_EXCHANGE.text -> {
+                        myMessage.fromHandler = ChangeDataHandlerName.CREATE_DATA_MESSAGE.text
+                    }
+                    ChangeDataHandlerName.CHANGE_DATA_SAVE.text -> {
+                        myMessage.fromHandler = ""
+                        val arguments = myMessage.text.split("||")
+                        val newExchange = ExchangeModel(arguments[0], arguments[1])
+                        exchangeLinkService
+                    }
                 }
+
                 messageUserService.update(userId.toInt(), myMessage)
 
                 if (handlerMapping.containsKey(callbackHandlerName))
@@ -213,12 +236,22 @@ class SK_Bot(
                             chatId = chatId,
                             myMessage
                         )
-                else if (handlerMapping2.containsKey(callbackHandlerName))
-                    handlerMapping2.getValue(callbackHandlerName)
+                else if (handlerMapping2.containsKey(callbackHandlerName)) {
+
+                    if (myMessage.fromHandler == ChangeDataHandlerName.CREATE_DATA_MESSAGE.text) {
+                        handlerMapping2.getValue(callbackHandlerName)
+                            .myProcessCallbackData(
+                                absSender = this,
+                                chatId = chatId,
+                                argument = myMessage.text
+                            )
+                    } else handlerMapping2.getValue(callbackHandlerName)
                         .myProcessCallbackData(
                             absSender = this,
                             chatId = chatId,
-                                                    )
+                            argument = ""
+                        )
+                }
             }
         }
     }

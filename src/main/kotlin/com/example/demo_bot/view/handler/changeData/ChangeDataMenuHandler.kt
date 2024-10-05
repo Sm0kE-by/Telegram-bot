@@ -5,6 +5,7 @@ import com.example.demo_bot.view.model.enums.ChangeDataHandlerName
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
+import kotlin.reflect.jvm.internal.impl.metadata.ProtoBuf.Annotation.Argument
 
 @Component
 class ChangeDataMenuHandler : ChangeDataCallbackHandler {
@@ -19,7 +20,7 @@ class ChangeDataMenuHandler : ChangeDataCallbackHandler {
     val callbackChangeSocialMediaMenu = ChangeDataHandlerName.CHANGE_SOCIAL_MEDIA.text
     val callbackBack = CreatePostHandlerName.START_HANDLER.text
 
-    override fun myProcessCallbackData(absSender: AbsSender, chatId: String) {
+    override fun myProcessCallbackData(absSender: AbsSender, chatId: String, argument: String) {
         absSender.execute(
             createTextDialogMenu(
                 chatId,

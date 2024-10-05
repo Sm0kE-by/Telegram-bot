@@ -15,7 +15,7 @@ class CreateDataExchangeCallbackHandler : ChangeDataCallbackHandler {
 
     override val name: ChangeDataHandlerName = ChangeDataHandlerName.CREATE_DATA_EXCHANGE
 
-    override fun myProcessCallbackData(absSender: AbsSender, chatId: String) {
+    override fun myProcessCallbackData(absSender: AbsSender, chatId: String, argument: String) {
 
        val text = getSampleDataText(
             "название биржи",
