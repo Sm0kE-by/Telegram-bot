@@ -1,33 +1,30 @@
-package com.example.demo_bot.view.handler.createPost
+package com.example.demo_bot.view.handler.changeData.exchange.proba
 
 import com.example.demo_bot.service.dto.ExchangeLinkDto
-import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.service.interfaces.ExchangeLinkService
-import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import com.example.demo_bot.util.createTextDialogMenu
+import com.example.demo_bot.view.handler.changeData.ChangeDataCallbackHandler
+import com.example.demo_bot.view.model.ChangeDataModel
+import com.example.demo_bot.view.model.enums.ChangeDataHandlerName
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
-
 @Component
-class NewEventOnCryptoExchangeHandler(
-    private val exchangeLinkService: ExchangeLinkService,
-) : CreatePostCallbackHandler {
-    override val name: CreatePostHandlerName = CreatePostHandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE
-    val listExchange = exchangeLinkService.getAll()
+class ChangeMenuCallbackHandler (private val exchangeLinkService: ExchangeLinkService) : ChangeData2CallbackHandler {
 
-    val callbackNext = CreatePostHandlerName.CREATE_MESSAGE.text
-    val callbackBack = CreatePostHandlerName.CREATE_POST_MENU.text
+    override val name: ChangeDataHandlerName = ChangeDataHandlerName.CHANGE_MENU
 
-    override fun myProcessCallbackData(
-        absSender: AbsSender,
-        chatId: String,
-        message: MessageUserDto,
-    ) {
+    val callbackNext = ChangeDataHandlerName.CHANGE_DATA_MESSAGE.text
+    val callbackBack = ChangeDataHandlerName.CRUD_MENU.text
+
+    override fun myProcessCallbackData(absSender: AbsSender, chatId: String, changeDataModel: ChangeDataModel) {
+
+        val listExchange = exchangeLinkService.getAll()
+
         absSender.execute(
             createTextDialogMenu(
                 chatId,
-                "Выберите криптобиржу",
+                "Выберите криптобиржу, которую необходимо изменить",
                 getExchangeName(listExchange),
             )
         )
@@ -55,6 +52,5 @@ class NewEventOnCryptoExchangeHandler(
         list.add(listOf("$callbackBack|back" to "Назад"))
         return list
     }
+
 }
-
-

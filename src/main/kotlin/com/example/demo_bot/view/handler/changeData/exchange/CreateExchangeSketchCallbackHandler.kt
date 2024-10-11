@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class SketchExchangeCallbackHandler : ChangeDataCallbackHandler {
+class CreateExchangeSketchCallbackHandler : ChangeDataCallbackHandler {
 
-    override val name: ChangeDataHandlerName = ChangeDataHandlerName.CHANGE_DATA_SKETCH
+    override val name: ChangeDataHandlerName = ChangeDataHandlerName.CREATE_EXCHANGE_SKETCH
 
-    val callbackNext = ChangeDataHandlerName.CHANGE_DATA_SAVE.text
-    val callbackBack = ChangeDataHandlerName.CREATE_DATA_EXCHANGE.text
+    val callbackNext = ChangeDataHandlerName.CREATE_EXCHANGE_SAVE.text
+    val callbackBack = ChangeDataHandlerName.CREATE_EXCHANGE.text
 
     override fun myProcessCallbackData(absSender: AbsSender, chatId: String, argument: String) {
 

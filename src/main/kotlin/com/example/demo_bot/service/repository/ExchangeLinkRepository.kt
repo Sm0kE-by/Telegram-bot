@@ -8,4 +8,5 @@ interface ExchangeLinkRepository: CrudRepository<ExchangeLinkEntity, Int> {
     fun findAllByOrderByName(): List<ExchangeLinkEntity>
 
     fun findByName(name: String): ExchangeLinkEntity
+
 }

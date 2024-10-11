@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class SaveExchangeCallbackHandler : ChangeDataCallbackHandler {
+class CreateExchangeSaveCallbackHandler : ChangeDataCallbackHandler {
 
-    override val name: ChangeDataHandlerName = ChangeDataHandlerName.CHANGE_DATA_SAVE
+    override val name: ChangeDataHandlerName = ChangeDataHandlerName.CREATE_EXCHANGE_SAVE
 
     val callbackDone = CreatePostHandlerName.START_HANDLER.text
 

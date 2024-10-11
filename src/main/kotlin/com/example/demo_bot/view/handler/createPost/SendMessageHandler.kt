@@ -4,7 +4,6 @@ import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.service.interfaces.AttributesService
 import com.example.demo_bot.service.interfaces.MessagePhotoService
 import com.example.demo_bot.service.interfaces.SocialMediaLinkService
-import com.example.demo_bot.view.model.BotAttributes
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import com.example.demo_bot.util.*
 import org.springframework.stereotype.Component
@@ -17,10 +16,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class SendMessageHandler(
-    private val botAttributes: BotAttributes,
-    private val attributesService: AttributesService,
     private val socialMediaLinkService: SocialMediaLinkService,
-    private val messagePhotoService: MessagePhotoService
 ) : CreatePostCallbackHandler {
 
     override val name: CreatePostHandlerName = CreatePostHandlerName.SEND_MESSAGE

@@ -9,12 +9,12 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 @Component
 class CRUDExchangeCallbackHandler : ChangeDataCallbackHandler {
 
-    override val name: ChangeDataHandlerName = ChangeDataHandlerName.CRUD_MENU
+    override val name: ChangeDataHandlerName = ChangeDataHandlerName.CRUD_MENU_EXCHANGE
     val text = "Что необходимо сделать в данном разделе?"
 
-    val callbackCreateData = ChangeDataHandlerName.CREATE_DATA_EXCHANGE.text
-    val callbackUpdateData = ChangeDataHandlerName.UPDATE_DATA_EXCHANGE.text
-    val callbackDeleteData = ChangeDataHandlerName.DELETE_DATA_EXCHANGE.text
+    val callbackCreateData = ChangeDataHandlerName.CREATE_EXCHANGE.text
+    val callbackUpdateData = ChangeDataHandlerName.UPDATE_EXCHANGE_MENU.text
+    val callbackDeleteData = ChangeDataHandlerName.DELETE_EXCHANGE.text
     val callbackBack = ChangeDataHandlerName.CHANGE_DATA_MENU.text
 
     override fun myProcessCallbackData(absSender: AbsSender, chatId: String, argument: String,) {

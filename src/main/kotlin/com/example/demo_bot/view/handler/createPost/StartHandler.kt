@@ -12,7 +12,8 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 class StartHandler : CreatePostCallbackHandler {
 
     val callbackCreatePost = CreatePostHandlerName.CREATE_POST_MENU.text
-    val callbackChangeAttributes = ChangeDataHandlerName.CHANGE_DATA_MENU.text
+//    val callbackChangeAttributes = ChangeDataHandlerName.CHANGE_DATA_MENU.text
+    val callbackChangeAttributes = ChangeDataHandlerName.CHANGE_DATA_START_MENU.text
 
     override val name: CreatePostHandlerName = CreatePostHandlerName.START_HANDLER
 
