@@ -10,7 +10,7 @@ class AttributeEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int = 0,
-    val name: String = "",
+    var name: String = "",
     var attribute1: String = "",
     var attribute2: String = "",
     var attribute3: String = "",

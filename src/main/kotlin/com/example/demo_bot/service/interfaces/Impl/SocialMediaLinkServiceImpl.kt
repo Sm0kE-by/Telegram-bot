@@ -18,8 +18,31 @@ class SocialMediaLinkServiceImpl(private val socialMediaLinkRepository: SocialMe
         ?.toDto()
         ?: throw NotFoundException()
 
+    override fun create(dto: SocialMediaLinkDto) {
+        socialMediaLinkRepository.save(dto.toEntity())
+    }
+
+    override fun update(id: Int, dto: SocialMediaLinkDto) {
+       val socialMediaLinkEntity = socialMediaLinkRepository.findByIdOrNull(id)
+           ?: throw NotFoundException()
+
+        socialMediaLinkEntity.name = dto.name
+        socialMediaLinkEntity.link = dto.link
+
+        socialMediaLinkRepository.save(socialMediaLinkEntity)
+    }
+
+    override fun delete(id: Int) {
+       socialMediaLinkRepository.deleteById(id)
+    }
+
     private fun SocialMediaLinkEntity.toDto(): SocialMediaLinkDto = SocialMediaLinkDto(
         id = this.id,
+        name = this.name,
+        link = this.link
+    )
+    private fun SocialMediaLinkDto.toEntity(): SocialMediaLinkEntity = SocialMediaLinkEntity(
+        id = 0,
         name = this.name,
         link = this.link
     )

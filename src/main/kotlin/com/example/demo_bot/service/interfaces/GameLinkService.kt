@@ -9,4 +9,10 @@ interface GameLinkService {
     fun getByName(name: String): GameLinkDto
 
     fun getById(id: Int): GameLinkDto
+
+    fun create(dto: GameLinkDto)
+
+    fun update(id: Int, dto: GameLinkDto)
+
+    fun delete(id: Int)
 }

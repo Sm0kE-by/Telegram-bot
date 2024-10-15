@@ -6,4 +6,6 @@ import org.springframework.data.repository.CrudRepository
 interface SocialMediaLinkRepository: CrudRepository<SocialMediaLinkEntity, Int> {
 
     fun findAllByOrderByName(): List<SocialMediaLinkEntity>
+
+    fun findByName(name: String):SocialMediaLinkEntity
 }

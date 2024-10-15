@@ -7,5 +7,5 @@ interface GamesLinkRepository: CrudRepository<GamesLinkEntity, Int> {
 
     fun findAllByOrderByName(): List<GamesLinkEntity>
 
-    fun getByName(name: String): GamesLinkEntity
+    fun findByName(name: String): GamesLinkEntity
 }

@@ -96,8 +96,8 @@ class SK_Bot(
                     val listArguments = update.message.text.split("||")
                     //TODO Сделать обработку ошибок
                     if (listArguments.size == 3) {
-                        map[userId.toInt()]?.exchange?.name = listArguments[1]
-                        map[userId.toInt()]?.exchange?.link = listArguments[2]
+                        map[userId.toInt()]?.exchange?.name = listArguments[0]
+                        map[userId.toInt()]?.exchange?.link = listArguments[1]
                     }
 
                 } else if (update.message.hasText()) {

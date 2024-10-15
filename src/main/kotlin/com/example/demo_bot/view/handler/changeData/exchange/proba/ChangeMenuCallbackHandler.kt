@@ -24,7 +24,7 @@ class ChangeMenuCallbackHandler (private val exchangeLinkService: ExchangeLinkSe
         absSender.execute(
             createTextDialogMenu(
                 chatId,
-                "Выберите криптобиржу, которую необходимо изменить",
+                "Выберите запись для редактирования",
                 getExchangeName(listExchange),
             )
         )

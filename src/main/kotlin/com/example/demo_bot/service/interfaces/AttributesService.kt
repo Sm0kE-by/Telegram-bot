@@ -8,4 +8,10 @@ interface AttributesService {
 
     fun getById(id: Int): AttributesDto
 
+ //   fun create(dto: AttributesDto)
+
+    fun update(id: Int, dto: AttributesDto)
+
+//    fun delete(id: Int)
+
 }

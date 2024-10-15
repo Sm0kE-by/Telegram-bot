@@ -9,6 +9,6 @@ class SocialMediaLinkEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int = 0,
-    val name: String = "",
-    val link: String = ""
+    var name: String = "",
+    var link: String = ""
 )

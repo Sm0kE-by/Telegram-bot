@@ -23,6 +23,11 @@ class SketchDataCallbackHandler(
     private val socialMediaLinkService: SocialMediaLinkService,
 ) : ChangeData2CallbackHandler {
 
+    companion object {
+        const val ERROR_DATA_ID = "error_data_id"
+        const val DATA_INTEGRITY_ERROR = "data_integrity_error"
+    }
+
     override val name: ChangeDataHandlerName = ChangeDataHandlerName.SKETCH_DATA
 
     val callbackNext = ChangeDataHandlerName.SAVE_DATA.text
@@ -37,11 +42,12 @@ class SketchDataCallbackHandler(
         ) {
             absSender.execute(createMessage(chatId, "Вы не ввели сообщение!!!"))
         } else {
-            if (changeDataModel.exchange.name != null && changeDataModel.exchange.link != null) {
+            val textMessage = getSketchText(changeDataModel)
+            if (textMessage != ERROR_DATA_ID) {
                 absSender.execute(
                     createTextDialogMenu(
                         chatId = chatId,
-                        text = getSketchText(changeDataModel),
+                        text = textMessage,
                         inlineButtons = listOf(
                             listOf(callbackNext to "Сохранить изменения"),
                             listOf(callbackBack to "Назад"),
@@ -63,17 +69,28 @@ class SketchDataCallbackHandler(
         var text = ""
 
         when (changeDataModel.category) {
-            ChangeDataHandlerName.CHANGE_ATTRIBUTES.text -> text =
-                getAttributesTextForSketch(changeDataModel.operation, changeDataModel.attributes)
+            ChangeDataHandlerName.CHANGE_ATTRIBUTES.text -> {
+                text = if (changeDataModel.attributes.attribute1 != "")
+                    getAttributesTextForSketch(changeDataModel.operation, changeDataModel.attributes)
+                else DATA_INTEGRITY_ERROR
+            }
 
-            ChangeDataHandlerName.CHANGE_EXCHANGE.text -> text =
-                getExchangeTextForSketch(changeDataModel.operation, changeDataModel.exchange)
+            ChangeDataHandlerName.CHANGE_EXCHANGE.text -> {
+                //TODO //TODO добавить реферальный код в проверку
+                text = if (changeDataModel.exchange.link != "")
+                    getExchangeTextForSketch(changeDataModel.operation, changeDataModel.exchange)
+                else DATA_INTEGRITY_ERROR
+            }
 
-            ChangeDataHandlerName.CHANGE_GAME.text -> text =
-                getGameTextForSketch(changeDataModel.operation, changeDataModel.game)
+            ChangeDataHandlerName.CHANGE_GAME.text ->
+                text = if (changeDataModel.game.link != "")
+                    getGameTextForSketch(changeDataModel.operation, changeDataModel.game)
+                else DATA_INTEGRITY_ERROR
 
-            ChangeDataHandlerName.CHANGE_SOCIAL_MEDIA.text -> text =
-                getSocialMediaTextForSketch(changeDataModel.operation, changeDataModel.socialLink)
+            ChangeDataHandlerName.CHANGE_SOCIAL_MEDIA.text ->
+                text = if (changeDataModel.socialLink.link != "")
+                    getSocialMediaTextForSketch(changeDataModel.operation, changeDataModel.socialLink)
+                else DATA_INTEGRITY_ERROR
         }
 
         return text
@@ -85,35 +102,26 @@ class SketchDataCallbackHandler(
         when (operation) {
 
             ChangeDataHandlerName.UPDATE.text -> {
-                val hashTag = attributes.id?.let { attributesService.getById(it) }
-                text = """
+                if (attributes.id != null) {
+                    val hashTag = attributesService.getById(attributes.id!!)
+
+                    text = """
                 *Старые данные:*
-                *Название ХешТега* => ${hashTag?.name}
-                *Атрибут 1* => ${hashTag?.attribute1}
-                *Атрибут 2* => ${hashTag?.attribute2}
-                *Атрибут 3* => ${hashTag?.attribute3}
-                *Атрибут 4* => ${hashTag?.attribute4}
-                *Атрибут 5* => ${hashTag?.attribute5}
+                *Название ХешТега* => ${hashTag.name}
+                *Атрибут 1* => ${hashTag.attribute1}
+                *Атрибут 2* => ${hashTag.attribute2}
+                *Атрибут 3* => ${hashTag.attribute3}
+                *Атрибут 4* => ${hashTag.attribute4}
+                *Атрибут 5* => ${hashTag.attribute5}
                                         
                 *Новые данные:*
-                *Название ХешТега* => ${hashTag?.name}
+                *Название ХешТега* => ${hashTag.name}
                 *Атрибут 1* => ${attributes.attribute1}
                 *Атрибут 2* => ${attributes.attribute2}
                 *Атрибут 3* => ${attributes.attribute3}
                 *Атрибут 4* => ${attributes.attribute4}
                 *Атрибут 5* => ${attributes.attribute5}""".trimIndent()
-            }
-
-            ChangeDataHandlerName.DELETE.text -> {
-                val hashTag = attributes.id?.let { attributesService.getById(it) }
-                text = """
-                *Удалить данные:*
-                *Название ХешТега* => ${hashTag?.name}
-                *Атрибут 1* => ${attributes.attribute1}
-                *Атрибут 2* => ${attributes.attribute2}
-                *Атрибут 3* => ${attributes.attribute3}
-                *Атрибут 4* => ${attributes.attribute4}
-                *Атрибут 5* => ${attributes.attribute5}""".trimIndent()
+                } else text = ERROR_DATA_ID
             }
         }
         return text
@@ -122,39 +130,40 @@ class SketchDataCallbackHandler(
     private fun getExchangeTextForSketch(operation: String, exchange: ExchangeLinkDto): String {
         var text = ""
         //TODO добавить реферальный код
-        if (exchange.name != "" && exchange.link != "") {
-            when (operation) {
-                ChangeDataHandlerName.CREATE.text -> {
-                    text = """
+        when (operation) {
+            ChangeDataHandlerName.CREATE.text -> {
+                text = """
                 *Новые данные:*
                 *Название биржи* => ${exchange.name}
                 *Реферальная ссылка на аккаунт* => ${exchange.link}
                 *Реферальный код* => ${exchange.link}""".trimIndent()
-                }
+            }
 
-                ChangeDataHandlerName.UPDATE.text -> {
-                    if (exchange.id != null) {
-                        val oldExchange = exchange.id?.let { exchangeLinkService.getById(it)
-                        text = """
+            ChangeDataHandlerName.UPDATE.text -> {
+                if (exchange.id != null) {
+                    val oldExchange = exchangeLinkService.getById(exchange.id!!)
+                    text = """
                 *Старые данные:*
-                *Название биржи* => ${oldExchange?.name}
-                *Реферальную ссылку на аккаунт* => ${oldExchange?.link}
-                *Реферальный код* => ${oldExchange?.name}
+                *Название биржи* => ${oldExchange.name}
+                *Реферальную ссылку на аккаунт* => ${oldExchange.link}
+                *Реферальный код* => ${oldExchange.name}
                         
                 *Новые данные:*
                 *Название биржи* => ${exchange.name}
                 *Реферальную ссылку на аккаунт* => ${exchange.link}
                 *Реферальный код* => ${exchange.link}""".trimIndent()
-                    }
-                }
-                ChangeDataHandlerName.DELETE.text -> {
-                    val oldExchange = exchange.id?.let { exchangeLinkService.getById(it) }
+                } else text = ERROR_DATA_ID
+            }
+
+            ChangeDataHandlerName.DELETE.text -> {
+                if (exchange.id != null) {
+                    val oldExchange = exchangeLinkService.getById(exchange.id!!)
                     text = """
                 *Удалить данные:*
-                *Название биржи* => ${oldExchange?.name}
-                *Реферальную ссылку на аккаунт* => ${oldExchange?.link}
-                *Реферальный код* => ${oldExchange?.link}""".trimIndent()
-                }
+                *Название биржи* => ${oldExchange.name}
+                *Реферальную ссылку на аккаунт* => ${oldExchange.link}
+                *Реферальный код* => ${oldExchange.link}""".trimIndent()
+                } else text = ERROR_DATA_ID
             }
         }
         return text
@@ -170,26 +179,30 @@ class SketchDataCallbackHandler(
                 *Ссылка на наш Клан* => ${game.clanLink}""".trimIndent()
 
             ChangeDataHandlerName.UPDATE.text -> {
-                val oldGame = game.id?.let { gameLinkService.getById(it) }
-                text = """
+                if (game.id != null) {
+                    val oldGame = gameLinkService.getById(game.id!!)
+                    text = """
                 *Старые данные:*
-                *Название игры* => ${oldGame?.name}
-                *Реферальная ссылка на игру* => ${oldGame?.link}
-                *Ссылка на наш Клан* => ${oldGame?.name}
+                *Название игры* => ${oldGame.name}
+                *Реферальная ссылка на игру* => ${oldGame.link}
+                *Ссылка на наш Клан* => ${oldGame.name}
                         
                 *Новые данные:*
                 *Название игры* => ${game.name}
                 *Реферальная ссылка на игру* => ${game.link}
                 *Ссылка на наш Клан* => ${game.link}""".trimIndent()
+                } else text = ERROR_DATA_ID
             }
 
             ChangeDataHandlerName.DELETE.text -> {
-                val oldGame = game.id?.let { gameLinkService.getById(it) }
-                text = """
+                if (game.id != null) {
+                    val oldGame = gameLinkService.getById(game.id!!)
+                    text = """
                 *Удалить данные:*
-                *Название игры* => ${oldGame?.name}
-                *Реферальная ссылка на игру* => ${oldGame?.link}
-                *Ссылка на наш Клан* => ${oldGame?.name}""".trimIndent()
+                *Название игры* => ${oldGame.name}
+                *Реферальная ссылка на игру* => ${oldGame.link}
+                *Ссылка на наш Клан* => ${oldGame.name}""".trimIndent()
+                } else text = ERROR_DATA_ID
             }
         }
         return text
@@ -204,23 +217,27 @@ class SketchDataCallbackHandler(
                 *Ссылка на Социальную сеть* => ${socialMedia.link}}""".trimIndent()
 
             ChangeDataHandlerName.UPDATE.text -> {
-                val oldSocialLink = socialMedia.id?.let { socialMediaLinkService.getById(it) }
-                text = """
+                if (socialMedia.id != null) {
+                    val oldSocialLink = socialMediaLinkService.getById(socialMedia.id!!)
+                    text = """
                 *Старые данные:*
-                *Название Социальной сети* => ${oldSocialLink?.name}
-                *Ссылка на Социальную сеть* => ${oldSocialLink?.link}                
+                *Название Социальной сети* => ${oldSocialLink.name}
+                *Ссылка на Социальную сеть* => ${oldSocialLink.link}                
                         
                 *Новые данные:*
                 *Название Социальной сети* => ${socialMedia.name}
                 *Ссылка на Социальную сеть* => ${socialMedia.link}""".trimIndent()
+                } else text = ERROR_DATA_ID
             }
 
             ChangeDataHandlerName.DELETE.text -> {
-                val oldSocialLink = socialMedia.id?.let { socialMediaLinkService.getById(it) }
-                text = """
+                if (socialMedia.id != null) {
+                    val oldSocialLink = socialMediaLinkService.getById(socialMedia.id!!)
+                    text = """
                 *Удалить данные:*
-                *Название Социальной сети* => ${oldSocialLink?.name}
-                *Ссылка на Социальную сеть* => ${oldSocialLink?.link}""".trimIndent()
+                *Название Социальной сети* => ${oldSocialLink.name}
+                *Ссылка на Социальную сеть* => ${oldSocialLink.link}""".trimIndent()
+                } else text = ERROR_DATA_ID
             }
         }
         return text
