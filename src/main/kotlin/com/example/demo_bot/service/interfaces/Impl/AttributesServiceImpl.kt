@@ -13,6 +13,8 @@ class AttributesServiceImpl(
     private val attributesRepository: AttributesRepository
 ) : AttributesService {
 
+    override fun getAll(): List<AttributesDto> = attributesRepository.findAllByOrderByName().map { it.toDto() }
+
     override fun getByName(name: String): AttributesDto =
         attributesRepository.findByName(name).toDto()
 
@@ -21,9 +23,6 @@ class AttributesServiceImpl(
             ?.toDto()
             ?: throw NotFoundException()
 
-//    override fun create(dto: AttributesDto) {
-//        attributesRepository.save(dto.toEntity())
-//    }
 
     override fun update(id: Int, dto: AttributesDto) {
         val attributes = attributesRepository.findByIdOrNull(id)
@@ -37,10 +36,6 @@ class AttributesServiceImpl(
 
         attributesRepository.save(attributes)
     }
-
-//    override fun delete(id: Int) {
-//        attributesRepository.deleteById(id)
-//    }
 
     private fun AttributeEntity.toDto(): AttributesDto =
         AttributesDto(

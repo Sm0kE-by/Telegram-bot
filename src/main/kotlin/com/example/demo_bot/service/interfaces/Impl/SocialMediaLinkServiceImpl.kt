@@ -1,6 +1,7 @@
 package com.example.demo_bot.service.interfaces.Impl
 
 import com.example.demo_bot.data.entity.SocialMediaLinkEntity
+import com.example.demo_bot.service.dto.ExchangeLinkDto
 import com.example.demo_bot.service.dto.SocialMediaLinkDto
 import com.example.demo_bot.service.interfaces.SocialMediaLinkService
 import com.example.demo_bot.service.repository.SocialMediaLinkRepository
@@ -13,6 +14,8 @@ class SocialMediaLinkServiceImpl(private val socialMediaLinkRepository: SocialMe
     SocialMediaLinkService {
 
     override fun getAll(): List<SocialMediaLinkDto> = socialMediaLinkRepository.findAllByOrderByName().map { it.toDto() }
+
+    override fun getByName(name: String): SocialMediaLinkDto = socialMediaLinkRepository.findByName(name).toDto()
 
     override fun getById(id: Int): SocialMediaLinkDto = socialMediaLinkRepository.findByIdOrNull(id)
         ?.toDto()

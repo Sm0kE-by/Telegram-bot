@@ -5,5 +5,7 @@ import org.springframework.data.repository.CrudRepository
 
 interface AttributesRepository: CrudRepository<AttributeEntity, Int> {
 
+    fun findAllByOrderByName(): List<AttributeEntity>
+
     fun findByName(name: String): AttributeEntity
 }

@@ -1,7 +1,6 @@
 package com.example.demo_bot.view.handler.changeData.exchange
 
 import com.example.demo_bot.util.createTextDialogMenu
-import com.example.demo_bot.util.getSampleDataText
 import com.example.demo_bot.view.handler.changeData.ChangeDataCallbackHandler
 import com.example.demo_bot.view.model.enums.ChangeDataHandlerName
 import org.springframework.stereotype.Component
@@ -16,11 +15,10 @@ class UpdateExchangeCallbackHandler : ChangeDataCallbackHandler{
     val callbackBack = ChangeDataHandlerName.UPDATE_EXCHANGE_MENU.text
 
     override fun myProcessCallbackData(absSender: AbsSender, chatId: String, argument: String) {
-        val text = getSampleDataText(
-            "название биржи",
-            "реферальную ссылку на аккаунт",
-            "реферальный код"
-        )
+        val text =
+            "название биржи"+
+                    "реферальную ссылку на аккаунт"+
+                    "реферальный код"
         absSender.execute(
             createTextDialogMenu(
                 chatId = chatId,

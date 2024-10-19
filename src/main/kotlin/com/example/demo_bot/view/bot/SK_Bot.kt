@@ -31,6 +31,7 @@ class SK_Bot(
     @Value("\${telegram.token}")
     token: String,
     commands: ArrayList<BotCommand>,
+    private val attributesService: AttributesService,
     private val exchangeLinkService: ExchangeLinkService,
     private val atrService: AttributesService,
     private val gameLinkService: GameLinkService,
@@ -92,13 +93,49 @@ class SK_Bot(
                 } else if (update.message.hasText() && myMessage.fromHandler == ChangeDataHandlerName.CREATE_DATA_MESSAGE.text) {
                     myMessage.text += update.message.text
 
+
                 } else if (update.message.hasText() && update.message.text.contains("||")) {
                     val listArguments = update.message.text.split("||")
                     //TODO Сделать обработку ошибок
-                    if (listArguments.size == 3) {
-                        map[userId.toInt()]?.exchange?.name = listArguments[0]
-                        map[userId.toInt()]?.exchange?.link = listArguments[1]
+
+                    when (map[userId.toInt()]?.category) {
+                        ChangeDataHandlerName.CHANGE_ATTRIBUTES.text -> {
+                            //TODO Сделать на разное количество атрибутов
+                            if (listArguments.size == 5) {
+                                map[userId.toInt()]?.attributes?.attribute1 = listArguments[0]
+                                map[userId.toInt()]?.attributes?.attribute2 = listArguments[1]
+                                map[userId.toInt()]?.attributes?.attribute3 = listArguments[2]
+                                map[userId.toInt()]?.attributes?.attribute4 = listArguments[3]
+                                map[userId.toInt()]?.attributes?.attribute5 = listArguments[4]
+                            }
+                        }
+
+                        ChangeDataHandlerName.CHANGE_EXCHANGE.text -> {
+                            if (listArguments.size == 3) {
+                                map[userId.toInt()]?.exchange?.name = listArguments[0]
+                                map[userId.toInt()]?.exchange?.link = listArguments[1]
+                            }
+                        }
+
+                        ChangeDataHandlerName.CHANGE_GAME.text -> {
+                            if (listArguments.size == 3) {
+                                map[userId.toInt()]?.game?.name = listArguments[0]
+                                map[userId.toInt()]?.game?.link = listArguments[1]
+                                map[userId.toInt()]?.game?.clanLink = listArguments[2]
+                            } else if (listArguments.size == 2) {
+                                map[userId.toInt()]?.game?.name = listArguments[0]
+                                map[userId.toInt()]?.game?.link = listArguments[1]
+                            }
+                        }
+
+                        ChangeDataHandlerName.CHANGE_SOCIAL_MEDIA.text -> {
+                            if (listArguments.size == 2) {
+                                map[userId.toInt()]?.socialLink?.name = listArguments[0]
+                                map[userId.toInt()]?.socialLink?.link = listArguments[1]
+                            }
+                        }
                     }
+
 
                 } else if (update.message.hasText()) {
                     execute(createMessage(chatId, "Вы написали: *${update.message.text}*"))
@@ -242,9 +279,28 @@ class SK_Bot(
                         if (callbackArguments[1] == ChangeDataHandlerName.CREATE.text)
                             map[userId.toInt()]?.operation = callbackArguments[1]
                         else {
-                        //если нажали UPDATE/DELETE получаю ID выбранного элемента
-                            val data = exchangeLinkService.getByName(callbackArguments[1])
-                            map[userId.toInt()]?.exchange?.id = data.id
+                            //если нажали UPDATE/DELETE получаю ID выбранного элемента
+                            when (map[userId.toInt()]?.category) {
+                                ChangeDataHandlerName.CHANGE_ATTRIBUTES.text -> {
+                                    val data = attributesService.getByName(callbackArguments[1])
+                                    map[userId.toInt()]?.exchange?.id = data.id
+                                }
+
+                                ChangeDataHandlerName.CHANGE_EXCHANGE.text -> {
+                                    val data = exchangeLinkService.getByName(callbackArguments[1])
+                                    map[userId.toInt()]?.exchange?.id = data.id
+                                }
+
+                                ChangeDataHandlerName.CHANGE_GAME.text -> {
+                                    val data = gameLinkService.getByName(callbackArguments[1])
+                                    map[userId.toInt()]?.exchange?.id = data.id
+                                }
+
+                                ChangeDataHandlerName.CHANGE_SOCIAL_MEDIA.text -> {
+                                    val data = socialMediaLinkService.getByName(callbackArguments[1])
+                                    map[userId.toInt()]?.exchange?.id = data.id
+                                }
+                            }
                         }
                     }
 

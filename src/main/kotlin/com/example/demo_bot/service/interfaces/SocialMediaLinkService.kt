@@ -6,6 +6,8 @@ interface SocialMediaLinkService {
 
     fun getAll(): List<SocialMediaLinkDto>
 
+    fun getByName(name: String): SocialMediaLinkDto
+
     fun getById(id: Int): SocialMediaLinkDto
 
     fun create(dto: SocialMediaLinkDto)

@@ -3,9 +3,9 @@ package com.example.demo_bot.service.dto
 data class AttributesDto(
     val id: Int? = null,
     val name: String,
-    val attribute1: String,
-    val attribute2: String,
-    val attribute3: String,
-    val attribute4: String,
-    val attribute5: String,
+    var attribute1: String,
+    var attribute2: String,
+    var attribute3: String,
+    var attribute4: String,
+    var attribute5: String,
 )

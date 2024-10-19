@@ -70,28 +70,31 @@ class SaveDataCallbackHandler(
 
     private fun changingAttributes(operation: String, attributes: AttributesDto) {
         when (operation) {
-            ChangeDataHandlerName.UPDATE.text ->attributesService.update(attributes.id!!, attributes)
+            ChangeDataHandlerName.UPDATE.text -> attributesService.update(attributes.id!!, attributes)
         }
     }
+
     private fun changingExchange(operation: String, exchange: ExchangeLinkDto) {
-      when (operation) {
-          ChangeDataHandlerName.CREATE.text -> exchangeLinkService.create(exchange)
-          ChangeDataHandlerName.UPDATE.text ->exchangeLinkService.update(exchange.id!!, exchange)
-          ChangeDataHandlerName.DELETE.text ->exchangeLinkService.delete(exchange.id!!)
-      }
+        when (operation) {
+            ChangeDataHandlerName.CREATE.text -> exchangeLinkService.create(exchange)
+            ChangeDataHandlerName.UPDATE.text -> exchangeLinkService.update(exchange.id!!, exchange)
+            ChangeDataHandlerName.DELETE.text -> exchangeLinkService.delete(exchange.id!!)
+        }
     }
+
     private fun changingGame(operation: String, game: GameLinkDto) {
         when (operation) {
             ChangeDataHandlerName.CREATE.text -> gameLinkService.create(game)
-            ChangeDataHandlerName.UPDATE.text ->gameLinkService.update(game.id!!, game)
-            ChangeDataHandlerName.DELETE.text ->gameLinkService.delete(game.id!!)
+            ChangeDataHandlerName.UPDATE.text -> gameLinkService.update(game.id!!, game)
+            ChangeDataHandlerName.DELETE.text -> gameLinkService.delete(game.id!!)
         }
     }
+
     private fun changingSocialMedia(operation: String, socialMedia: SocialMediaLinkDto) {
         when (operation) {
             ChangeDataHandlerName.CREATE.text -> socialMediaLinkService.create(socialMedia)
-            ChangeDataHandlerName.UPDATE.text ->socialMediaLinkService.update(socialMedia.id!!, socialMedia)
-            ChangeDataHandlerName.DELETE.text ->socialMediaLinkService.delete(socialMedia.id!!)
+            ChangeDataHandlerName.UPDATE.text -> socialMediaLinkService.update(socialMedia.id!!, socialMedia)
+            ChangeDataHandlerName.DELETE.text -> socialMediaLinkService.delete(socialMedia.id!!)
         }
     }
 }
