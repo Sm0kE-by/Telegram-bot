@@ -1,4 +1,4 @@
-package com.example.demo_bot.view.handler.changeData.exchange.proba
+package com.example.demo_bot.view.handler.changeData
 
 import com.example.demo_bot.service.dto.AttributesDto
 import com.example.demo_bot.service.dto.ExchangeLinkDto
@@ -9,8 +9,6 @@ import com.example.demo_bot.service.interfaces.ExchangeLinkService
 import com.example.demo_bot.service.interfaces.GameLinkService
 import com.example.demo_bot.service.interfaces.SocialMediaLinkService
 import com.example.demo_bot.util.createTextDialogMenu
-import com.example.demo_bot.view.handler.changeData.ChangeDataCallbackHandler
-import com.example.demo_bot.view.handler.changeData.exchange.proba.SketchDataCallbackHandler.Companion.DATA_INTEGRITY_ERROR
 import com.example.demo_bot.view.model.ChangeDataModel
 import com.example.demo_bot.view.model.enums.ChangeDataHandlerName
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
@@ -23,7 +21,7 @@ class SaveDataCallbackHandler(
     private val attributesService: AttributesService,
     private val gameLinkService: GameLinkService,
     private val socialMediaLinkService: SocialMediaLinkService,
-) : ChangeData2CallbackHandler {
+) : ChangeDataCallbackHandler {
 
     override val name: ChangeDataHandlerName = ChangeDataHandlerName.SAVE_DATA
 
@@ -70,31 +68,31 @@ class SaveDataCallbackHandler(
 
     private fun changingAttributes(operation: String, attributes: AttributesDto) {
         when (operation) {
-            ChangeDataHandlerName.UPDATE.text -> attributesService.update(attributes.id!!, attributes)
+            ChangeDataHandlerName.UPDATE_DATA.text -> attributesService.update(attributes.id!!, attributes)
         }
     }
 
     private fun changingExchange(operation: String, exchange: ExchangeLinkDto) {
         when (operation) {
-            ChangeDataHandlerName.CREATE.text -> exchangeLinkService.create(exchange)
-            ChangeDataHandlerName.UPDATE.text -> exchangeLinkService.update(exchange.id!!, exchange)
-            ChangeDataHandlerName.DELETE.text -> exchangeLinkService.delete(exchange.id!!)
+            ChangeDataHandlerName.CREATE_DATA.text -> exchangeLinkService.create(exchange)
+            ChangeDataHandlerName.UPDATE_DATA.text -> exchangeLinkService.update(exchange.id!!, exchange)
+            ChangeDataHandlerName.DELETE_DATA.text -> exchangeLinkService.delete(exchange.id!!)
         }
     }
 
     private fun changingGame(operation: String, game: GameLinkDto) {
         when (operation) {
-            ChangeDataHandlerName.CREATE.text -> gameLinkService.create(game)
-            ChangeDataHandlerName.UPDATE.text -> gameLinkService.update(game.id!!, game)
-            ChangeDataHandlerName.DELETE.text -> gameLinkService.delete(game.id!!)
+            ChangeDataHandlerName.CREATE_DATA.text -> gameLinkService.create(game)
+            ChangeDataHandlerName.UPDATE_DATA.text -> gameLinkService.update(game.id!!, game)
+            ChangeDataHandlerName.DELETE_DATA.text -> gameLinkService.delete(game.id!!)
         }
     }
 
     private fun changingSocialMedia(operation: String, socialMedia: SocialMediaLinkDto) {
         when (operation) {
-            ChangeDataHandlerName.CREATE.text -> socialMediaLinkService.create(socialMedia)
-            ChangeDataHandlerName.UPDATE.text -> socialMediaLinkService.update(socialMedia.id!!, socialMedia)
-            ChangeDataHandlerName.DELETE.text -> socialMediaLinkService.delete(socialMedia.id!!)
+            ChangeDataHandlerName.CREATE_DATA.text -> socialMediaLinkService.create(socialMedia)
+            ChangeDataHandlerName.UPDATE_DATA.text -> socialMediaLinkService.update(socialMedia.id!!, socialMedia)
+            ChangeDataHandlerName.DELETE_DATA.text -> socialMediaLinkService.delete(socialMedia.id!!)
         }
     }
 }

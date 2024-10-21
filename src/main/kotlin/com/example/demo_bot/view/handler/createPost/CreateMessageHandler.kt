@@ -1,8 +1,8 @@
 package com.example.demo_bot.view.handler.createPost
 
-import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import com.example.demo_bot.util.createTextDialogMenu
+import com.example.demo_bot.view.model.MessageUser
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
@@ -18,10 +18,8 @@ class CreateMessageHandler : CreatePostCallbackHandler {
     override fun myProcessCallbackData(
         absSender: AbsSender,
         chatId: String,
-        message: MessageUserDto,
+        message: MessageUser,
     ) {
-//        val fromHandlerName = arguments[1]
-
         absSender.execute(
             createTextDialogMenu(
                 chatId,
@@ -30,17 +28,7 @@ class CreateMessageHandler : CreatePostCallbackHandler {
                     listOf("$callbackNext|next" to "Далее"),
                     listOf("$callbackBack|back" to "Назад"),
                 ),
-  //              fromHandlerName = getFromHandlerName(fromHandlerName)
             )
         )
     }
-
-    //зачем?
-//    private fun getFromHandlerName(handlerName: HandlerName) : String =
-//        when (handlerName) {
-//            HandlerName.CREATE_POST_MENU.text ->  HandlerName.MESSAGE_SKETCH.text
-//            HandlerName.DAILY_TASKS_IN_GAMES.text -> HandlerName.MESSAGE_SKETCH.text
-//            else -> CommandName.START.text
-//        }
-
 }

@@ -1,8 +1,8 @@
 package com.example.demo_bot.view.handler.createPost
 
-import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import com.example.demo_bot.util.createTextDialogMenu
+import com.example.demo_bot.view.model.MessageUser
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
@@ -16,7 +16,7 @@ class CreatePostAboutCrypto  : CreatePostCallbackHandler {
     override fun myProcessCallbackData(
         absSender: AbsSender,
         chatId: String,
-        message: MessageUserDto
+        message: MessageUser
     ) {
         absSender.execute(
             createTextDialogMenu(
@@ -26,7 +26,6 @@ class CreatePostAboutCrypto  : CreatePostCallbackHandler {
                     listOf("$callbackNext|empty" to "Далее"),
                     listOf("$callbackBack|empty" to "Назад"),
                 ),
-//                fromHandlerName = name
             )
         )
     }

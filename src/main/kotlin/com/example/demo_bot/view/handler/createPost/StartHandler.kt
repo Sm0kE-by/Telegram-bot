@@ -3,6 +3,7 @@ package com.example.demo_bot.view.handler.createPost
 import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import com.example.demo_bot.util.createTextDialogMenu
+import com.example.demo_bot.view.model.MessageUser
 import com.example.demo_bot.view.model.enums.ChangeDataHandlerName
 import org.springframework.stereotype.Component
 
@@ -12,7 +13,6 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 class StartHandler : CreatePostCallbackHandler {
 
     val callbackCreatePost = CreatePostHandlerName.CREATE_POST_MENU.text
-//    val callbackChangeAttributes = ChangeDataHandlerName.CHANGE_DATA_MENU.text
     val callbackChangeAttributes = ChangeDataHandlerName.CHANGE_DATA_START_MENU.text
 
     override val name: CreatePostHandlerName = CreatePostHandlerName.START_HANDLER
@@ -20,7 +20,7 @@ class StartHandler : CreatePostCallbackHandler {
     override fun myProcessCallbackData(
         absSender: AbsSender,
         chatId: String,
-        message: MessageUserDto
+        message: MessageUser
     ) {
         absSender.execute(
             createTextDialogMenu(
@@ -30,7 +30,6 @@ class StartHandler : CreatePostCallbackHandler {
                     listOf("$callbackCreatePost|create_post" to "Создать пост"),
                     listOf("$callbackChangeAttributes|change_attributes" to "Изменить атрибуты"),
                 ),
-                //fromHandlerName = HandlerName.CREATE_POST_MENU
             )
         )
     }

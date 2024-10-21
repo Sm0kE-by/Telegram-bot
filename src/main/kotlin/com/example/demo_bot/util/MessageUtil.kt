@@ -2,6 +2,7 @@ package com.example.demo_bot.util
 
 import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.service.dto.SocialMediaLinkDto
+import com.example.demo_bot.view.model.MessageUser
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
@@ -47,14 +48,14 @@ fun getInlineKeyboard(
         }
     }
 
-fun sendMessage(chatId: String, message: MessageUserDto) =
+fun sendMessage(chatId: String, message: MessageUser) =
     if (message.link.isEmpty()) {
         createMessage(chatId, previewMessage(message))
     } else {
         createMessage(chatId, previewMessageAndLinks(message))
     }
 
-fun createPhotosMessage(absSender: AbsSender, chatId: String, message: MessageUserDto,inlineButtons: List<List<Pair<String, String>>>,) {
+fun createPhotosMessage(absSender: AbsSender, chatId: String, message: MessageUser, inlineButtons: List<List<Pair<String, String>>>,) {
     if (message.listPhoto.size == 1) {
         val photo = InputFile(message.listPhoto[0].telegramFileId)
         val ph = SendPhoto()
@@ -110,7 +111,7 @@ fun createPhotosMessage(absSender: AbsSender, chatId: String, message: MessageUs
 
 
 fun previewMessage(
-    message: MessageUserDto
+    message: MessageUser
 ): String {
     return """
           ${message.title}
@@ -124,7 +125,7 @@ fun previewMessage(
 }
 
 fun previewMessageAndLinks(
-    message: MessageUserDto
+    message: MessageUser
 ): String {
     return """
           ${message.title}

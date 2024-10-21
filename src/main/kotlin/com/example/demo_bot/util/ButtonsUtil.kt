@@ -21,7 +21,7 @@ fun getThreeRowsOfButtons(
             listNames.addAll(getTwoRowsOfButtons(remainingNames, callbackNext, callbackBack))
         }
         if (i + 2 == names.size - 1) {
-            listNames.add(listOf("$callbackBack|back" to "Назад"))
+            listNames.add(listOf(callbackBack to "Назад"))
         }
     }
     return listNames
@@ -46,7 +46,7 @@ fun getTwoRowsOfButtons(
             listNames.addAll(getOneRowsOfButtons(remainingNames, callbackNext, callbackBack))
         }
         if (i + 1 == names.size - 1) {
-            listNames.add(listOf("$callbackBack|back" to "Назад"))
+            listNames.add(listOf(callbackBack to "Назад"))
         }
     }
     return listNames
@@ -65,6 +65,6 @@ fun getOneRowsOfButtons(
             )
         )
     }
-    list.add(listOf("$callbackBack|back" to "Назад"))
+    list.add(listOf(callbackBack to "Назад"))
     return list
 }

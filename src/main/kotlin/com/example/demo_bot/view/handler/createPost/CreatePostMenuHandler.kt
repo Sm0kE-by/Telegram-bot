@@ -1,12 +1,8 @@
 package com.example.demo_bot.view.handler.createPost
 
-//import com.example.demo_bot.view.handler.createPost.MessageSketchHandler.Companion.createNewPost
-//import com.example.demo_bot.view.handler.createPost.MessageSketchHandler.Companion.dailyTaskInGames
-//import com.example.demo_bot.view.handler.createPost.MessageSketchHandler.Companion.inviteNewGame
-//import com.example.demo_bot.view.handler.createPost.MessageSketchHandler.Companion.newEventOnCryptoExchange
-import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import com.example.demo_bot.util.createTextDialogMenu
+import com.example.demo_bot.view.model.MessageUser
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
@@ -23,7 +19,7 @@ class CreatePostMenuHandler: CreatePostCallbackHandler {
     override fun myProcessCallbackData(
         absSender: AbsSender,
         chatId: String,
-        message: MessageUserDto,
+        message: MessageUser,
     ) {
         absSender.execute(
             createTextDialogMenu(
@@ -35,16 +31,7 @@ class CreatePostMenuHandler: CreatePostCallbackHandler {
                     listOf("$callbackNewEventOnCryptoExchange|${CreatePostHandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text}" to "Событие на криптобирже"),
                     listOf("$callbackDailyTaskInGames|${CreatePostHandlerName.DAILY_TASKS_IN_GAMES.text}" to "Ежедневные задания в играх"),
                 ),
-//                fromHandlerName = name
             )
         )
-
-
-
-
-
-
     }
-
-
 }

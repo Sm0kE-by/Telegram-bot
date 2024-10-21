@@ -1,4 +1,4 @@
-package com.example.demo_bot.view.handler.changeData.exchange.proba
+package com.example.demo_bot.view.handler.changeData
 
 import com.example.demo_bot.service.dto.AttributesDto
 import com.example.demo_bot.service.dto.ExchangeLinkDto
@@ -8,8 +8,8 @@ import com.example.demo_bot.service.interfaces.AttributesService
 import com.example.demo_bot.service.interfaces.ExchangeLinkService
 import com.example.demo_bot.service.interfaces.GameLinkService
 import com.example.demo_bot.service.interfaces.SocialMediaLinkService
+import com.example.demo_bot.util.createMessage
 import com.example.demo_bot.util.createTextDialogMenu
-import com.example.demo_bot.view.learn_bot.createMessage
 import com.example.demo_bot.view.model.ChangeDataModel
 import com.example.demo_bot.view.model.enums.ChangeDataHandlerName
 import org.springframework.stereotype.Component
@@ -21,11 +21,11 @@ class SketchDataCallbackHandler(
     private val attributesService: AttributesService,
     private val gameLinkService: GameLinkService,
     private val socialMediaLinkService: SocialMediaLinkService,
-) : ChangeData2CallbackHandler {
+) : ChangeDataCallbackHandler {
 
     companion object {
-        const val ERROR_DATA_ID = "error_data_id"
-        const val DATA_INTEGRITY_ERROR = "data_integrity_error"
+        const val ERROR_DATA_ID = "error data id"
+        const val DATA_INTEGRITY_ERROR = "data integrity error"
     }
 
     override val name: ChangeDataHandlerName = ChangeDataHandlerName.SKETCH_DATA
@@ -39,6 +39,7 @@ class SketchDataCallbackHandler(
             changeDataModel.exchange.name == ""
             && changeDataModel.game.name == ""
             && changeDataModel.socialLink.name == ""
+            && changeDataModel.operation != ChangeDataHandlerName.DELETE_DATA.text
         ) {
             absSender.execute(createMessage(chatId, "Вы не ввели сообщение!!!"))
         } else {
@@ -70,25 +71,33 @@ class SketchDataCallbackHandler(
 
         when (changeDataModel.category) {
             ChangeDataHandlerName.CHANGE_ATTRIBUTES.text -> {
-                text = if (changeDataModel.attributes.attribute1 != "")
+                text = if (changeDataModel.attributes.attribute1 != ""
+                    || changeDataModel.operation == ChangeDataHandlerName.DELETE_DATA.text
+                )
                     getAttributesTextForSketch(changeDataModel.operation, changeDataModel.attributes)
                 else DATA_INTEGRITY_ERROR
             }
 
             ChangeDataHandlerName.CHANGE_EXCHANGE.text -> {
                 //TODO //TODO добавить реферальный код в проверку
-                text = if (changeDataModel.exchange.link != "")
+                text = if (changeDataModel.exchange.link != ""
+                    || changeDataModel.operation == ChangeDataHandlerName.DELETE_DATA.text
+                )
                     getExchangeTextForSketch(changeDataModel.operation, changeDataModel.exchange)
                 else DATA_INTEGRITY_ERROR
             }
 
             ChangeDataHandlerName.CHANGE_GAME.text ->
-                text = if (changeDataModel.game.link != "")
+                text = if (changeDataModel.game.link != ""
+                    || changeDataModel.operation == ChangeDataHandlerName.DELETE_DATA.text
+                )
                     getGameTextForSketch(changeDataModel.operation, changeDataModel.game)
                 else DATA_INTEGRITY_ERROR
 
             ChangeDataHandlerName.CHANGE_SOCIAL_MEDIA.text ->
-                text = if (changeDataModel.socialLink.link != "")
+                text = if (changeDataModel.socialLink.link != ""
+                    || changeDataModel.operation == ChangeDataHandlerName.DELETE_DATA.text
+                )
                     getSocialMediaTextForSketch(changeDataModel.operation, changeDataModel.socialLink)
                 else DATA_INTEGRITY_ERROR
         }
@@ -101,7 +110,7 @@ class SketchDataCallbackHandler(
         var text = ""
         when (operation) {
 
-            ChangeDataHandlerName.UPDATE.text -> {
+            ChangeDataHandlerName.UPDATE_DATA.text -> {
                 if (attributes.id != null) {
                     val hashTag = attributesService.getById(attributes.id!!)
 
@@ -131,7 +140,7 @@ class SketchDataCallbackHandler(
         var text = ""
         //TODO добавить реферальный код
         when (operation) {
-            ChangeDataHandlerName.CREATE.text -> {
+            ChangeDataHandlerName.CREATE_DATA.text -> {
                 text = """
                 *Новые данные:*
                 *Название биржи* => ${exchange.name}
@@ -139,7 +148,7 @@ class SketchDataCallbackHandler(
                 *Реферальный код* => ${exchange.link}""".trimIndent()
             }
 
-            ChangeDataHandlerName.UPDATE.text -> {
+            ChangeDataHandlerName.UPDATE_DATA.text -> {
                 if (exchange.id != null) {
                     val oldExchange = exchangeLinkService.getById(exchange.id!!)
                     text = """
@@ -155,7 +164,7 @@ class SketchDataCallbackHandler(
                 } else text = ERROR_DATA_ID
             }
 
-            ChangeDataHandlerName.DELETE.text -> {
+            ChangeDataHandlerName.DELETE_DATA.text -> {
                 if (exchange.id != null) {
                     val oldExchange = exchangeLinkService.getById(exchange.id!!)
                     text = """
@@ -172,13 +181,13 @@ class SketchDataCallbackHandler(
     private fun getGameTextForSketch(operation: String, game: GameLinkDto): String {
         var text = ""
         when (operation) {
-            ChangeDataHandlerName.CREATE.text -> text = """
+            ChangeDataHandlerName.CREATE_DATA.text -> text = """
                 *Новые данные:*
                 *Название игры* => ${game.name}
                 *Реферальная ссылка на игру* => ${game.link}
                 *Ссылка на наш Клан* => ${game.clanLink}""".trimIndent()
 
-            ChangeDataHandlerName.UPDATE.text -> {
+            ChangeDataHandlerName.UPDATE_DATA.text -> {
                 if (game.id != null) {
                     val oldGame = gameLinkService.getById(game.id!!)
                     text = """
@@ -194,7 +203,7 @@ class SketchDataCallbackHandler(
                 } else text = ERROR_DATA_ID
             }
 
-            ChangeDataHandlerName.DELETE.text -> {
+            ChangeDataHandlerName.DELETE_DATA.text -> {
                 if (game.id != null) {
                     val oldGame = gameLinkService.getById(game.id!!)
                     text = """
@@ -211,12 +220,12 @@ class SketchDataCallbackHandler(
     private fun getSocialMediaTextForSketch(operation: String, socialMedia: SocialMediaLinkDto): String {
         var text = ""
         when (operation) {
-            ChangeDataHandlerName.CREATE.text -> text = """
+            ChangeDataHandlerName.CREATE_DATA.text -> text = """
                 *Новые данные:*
                 *Название Социальной сети* => ${socialMedia.name}
                 *Ссылка на Социальную сеть* => ${socialMedia.link}}""".trimIndent()
 
-            ChangeDataHandlerName.UPDATE.text -> {
+            ChangeDataHandlerName.UPDATE_DATA.text -> {
                 if (socialMedia.id != null) {
                     val oldSocialLink = socialMediaLinkService.getById(socialMedia.id!!)
                     text = """
@@ -230,7 +239,7 @@ class SketchDataCallbackHandler(
                 } else text = ERROR_DATA_ID
             }
 
-            ChangeDataHandlerName.DELETE.text -> {
+            ChangeDataHandlerName.DELETE_DATA.text -> {
                 if (socialMedia.id != null) {
                     val oldSocialLink = socialMediaLinkService.getById(socialMedia.id!!)
                     text = """

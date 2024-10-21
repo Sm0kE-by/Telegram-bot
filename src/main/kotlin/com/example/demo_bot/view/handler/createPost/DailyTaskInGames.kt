@@ -1,11 +1,11 @@
 package com.example.demo_bot.view.handler.createPost
 
 import com.example.demo_bot.service.dto.GameLinkDto
-import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.service.interfaces.GameLinkService
 import com.example.demo_bot.view.model.enums.CommandName
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import com.example.demo_bot.util.createTextDialogMenu
+import com.example.demo_bot.view.model.MessageUser
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
@@ -23,7 +23,7 @@ class DailyTaskInGames(
     override fun myProcessCallbackData(
         absSender: AbsSender,
         chatId: String,
-        message: MessageUserDto,
+        message: MessageUser,
     ) {
         absSender.execute(
             createTextDialogMenu(
@@ -34,6 +34,7 @@ class DailyTaskInGames(
         )
     }
 
+    //TODO update fun
     private fun getGameName(listGame: List<GameLinkDto>): List<List<Pair<String, String>>> {
         val list = ArrayList<List<Pair<String, String>>>()
         for (i in listGame.indices step 3) {

@@ -1,17 +1,13 @@
 package com.example.demo_bot.view.handler.createPost
 
-import com.example.demo_bot.service.dto.MessageUserDto
-import com.example.demo_bot.service.interfaces.MessageUserService
-import com.example.demo_bot.view.learn_bot.createMessage
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import com.example.demo_bot.util.*
+import com.example.demo_bot.view.model.MessageUser
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class MessageSketchHandler(
-    private val messageUserService: MessageUserService,
-) : CreatePostCallbackHandler {
+class MessageSketchHandler() : CreatePostCallbackHandler {
 
     companion object {
         const val TEXT_SIZE = 4096
@@ -26,7 +22,7 @@ class MessageSketchHandler(
     override fun myProcessCallbackData(
         absSender: AbsSender,
         chatId: String,
-        message: MessageUserDto,
+        message: MessageUser,
     ) {
 
         if (message.text.isEmpty() && message.listPhoto.isEmpty()) {
@@ -58,14 +54,14 @@ class MessageSketchHandler(
         }
     }
 
-    private fun saveMessageTextForDb(absSender: AbsSender, chatId: String, message: MessageUserDto, textSize: Int) {
-        val text = getTextMessage(absSender, chatId, message, TEXT_SIZE)
+    private fun saveMessageTextForDb(absSender: AbsSender, chatId: String, message: MessageUser, textSize: Int) {
+        val text = getTextMessage(absSender, chatId, message, textSize)
         message.text = text
-        messageUserService.update(message.userId!!, message)
+ //       messageUserService.update(message.userId!!, message)
     }
 
 
-    private fun getTextMessage(absSender: AbsSender, chatId: String, message: MessageUserDto, textSize: Int): String {
+    private fun getTextMessage(absSender: AbsSender, chatId: String, message: MessageUser, textSize: Int): String {
 
         var text = if (message.link == "") {
             previewMessage(message)

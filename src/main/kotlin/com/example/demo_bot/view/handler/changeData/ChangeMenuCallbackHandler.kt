@@ -1,4 +1,4 @@
-package com.example.demo_bot.view.handler.changeData.exchange.proba
+package com.example.demo_bot.view.handler.changeData
 
 import com.example.demo_bot.service.interfaces.AttributesService
 import com.example.demo_bot.service.interfaces.ExchangeLinkService
@@ -19,7 +19,7 @@ class ChangeMenuCallbackHandler(
     private val exchangeLinkService: ExchangeLinkService,
     private val gameLinkService: GameLinkService,
     private val socialMediaLinkService: SocialMediaLinkService,
-) : ChangeData2CallbackHandler {
+) : ChangeDataCallbackHandler {
 
     override val name: ChangeDataHandlerName = ChangeDataHandlerName.CHANGE_MENU
 
