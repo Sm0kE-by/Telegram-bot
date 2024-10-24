@@ -14,8 +14,4 @@ class UserEntity(
     var lastName: String = "",
     @Column(name = "user_name")
     var userName: String = "",
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @JoinColumn(name = "id")
-    var messageUserEntity: MessageUserEntity
 )

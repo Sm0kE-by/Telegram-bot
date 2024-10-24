@@ -57,9 +57,7 @@ class MessageSketchHandler() : CreatePostCallbackHandler {
     private fun saveMessageTextForDb(absSender: AbsSender, chatId: String, message: MessageUser, textSize: Int) {
         val text = getTextMessage(absSender, chatId, message, textSize)
         message.text = text
- //       messageUserService.update(message.userId!!, message)
     }
-
 
     private fun getTextMessage(absSender: AbsSender, chatId: String, message: MessageUser, textSize: Int): String {
 

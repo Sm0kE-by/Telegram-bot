@@ -16,7 +16,7 @@ data class ChangeDataModel(
         attribute3 = "",
         attribute4 = "",
         attribute5 = ""),
-    val exchange: ExchangeLinkDto = ExchangeLinkDto(name = "", link = ""),
+    val exchange: ExchangeLinkDto = ExchangeLinkDto(name = "", link = "", code = ""),
     val game: GameLinkDto = GameLinkDto(name = "", link = "", clanLink = ""),
     val socialLink: SocialMediaLinkDto = SocialMediaLinkDto(name = "", link = ""),
 )

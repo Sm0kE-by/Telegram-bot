@@ -1,8 +1,7 @@
 package com.example.demo_bot.util
 
-import com.example.demo_bot.service.dto.MessageUserDto
-import com.example.demo_bot.service.dto.SocialMediaLinkDto
 import com.example.demo_bot.view.model.MessageUser
+import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
@@ -20,9 +19,9 @@ import org.telegram.telegrambots.meta.bots.AbsSender
  */
 fun createMessage(chatId: String, text: String) =
     SendMessage(chatId, text)
-        .apply { enableMarkdown(true) }
+       // .apply { enableMarkdown(true) }
+        .apply { parseMode = ParseMode.HTML }
         .apply { disableWebPagePreview() }
-
 
 fun createTextDialogMenu(
     chatId: String,
@@ -34,7 +33,6 @@ fun createTextDialogMenu(
 
 fun getInlineKeyboard(
     allButtons: List<List<Pair<String, String>>>,
-    //   fromHandlerName: HandlerName
 ): InlineKeyboardMarkup =
     InlineKeyboardMarkup().apply {
         keyboard = allButtons.map { rowButtons ->
@@ -42,7 +40,6 @@ fun getInlineKeyboard(
                 InlineKeyboardButton().apply {
                     text = buttonText
                     callbackData = "$data"
-                    //       "|${fromHandlerName.text}"
                 }
             }
         }
@@ -66,8 +63,6 @@ fun createPhotosMessage(absSender: AbsSender, chatId: String, message: MessageUs
         if (message.text.isNotEmpty()) ph.caption = message.text
         absSender.execute(ph.apply { replyMarkup = getInlineKeyboard(inlineButtons) })
 
-
-
     } else if (message.listPhoto.size in 2..10) {
 
         val list = ArrayList<InputMedia>()
@@ -90,30 +85,13 @@ fun createPhotosMessage(absSender: AbsSender, chatId: String, message: MessageUs
             .apply { replyMarkup = getInlineKeyboard(inlineButtons) }
             .apply { enableMarkdown(true) }
             .apply { disableWebPagePreview() })
-
-        //       bot.sendMediaGroup(
-//                    chatId = ChatId.fromId(message.chat.id),
-//                    mediaGroup = MediaGroup.from(
-//                        InputMediaPhoto(
-//                            media = ByUrl("https://www.sngular.com/wp-content/uploads/2019/11/Kotlin-Blog-1400x411.png"),
-//                            caption = "I come from an url :P",
-//                        ),
-//                        InputMediaPhoto(
-//                            media = ByUrl("https://www.sngular.com/wp-content/uploads/2019/11/Kotlin-Blog-1400x411.png"),
-//                            caption = "Me too!",
-//                        ),
-//                    ),
-//                    replyToMessageId = message.messageId,
-//                )
     }
-
 }
-
 
 fun previewMessage(
     message: MessageUser
 ): String {
-    return """
+    return """       
           ${message.title}
             
           ${message.text}      
@@ -140,12 +118,3 @@ fun previewMessageAndLinks(
         """.trimIndent()
 }
 
-private fun getHashAndSocial(listHashTags: List<String>, socialLink: List<SocialMediaLinkDto>): List<String> {
-
-    var hash = String()
-    var social = String()
-    listHashTags.forEach { hash += "$it " }
-    socialLink.forEach { social += "[${it.name}](${it.link}) " }
-
-    return listOf(hash, social)
-}

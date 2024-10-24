@@ -1,6 +1,5 @@
 package com.example.demo_bot.view.handler.createPost
 
-import com.example.demo_bot.service.dto.MessageUserDto
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import com.example.demo_bot.util.createTextDialogMenu
 import com.example.demo_bot.view.model.MessageUser

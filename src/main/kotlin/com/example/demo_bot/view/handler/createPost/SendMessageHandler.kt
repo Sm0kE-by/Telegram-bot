@@ -75,14 +75,4 @@ class SendMessageHandler(
             )
         }
     }
-
-    private fun getChatIdForSendMessage(arguments: String): String {
-
-        return when (arguments) {
-            CreatePostHandlerName.CREATE_POST_MENU.text -> "-1002115452577"
-            CreatePostHandlerName.DAILY_TASKS_IN_GAMES.text -> "-1002115452577"
-            else -> "-1002115452577"
-        }
-
-    }
 }

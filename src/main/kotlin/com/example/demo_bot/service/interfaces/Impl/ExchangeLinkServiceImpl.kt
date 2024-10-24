@@ -34,6 +34,7 @@ class ExchangeLinkServiceImpl(private val exchangeLinkRepository: ExchangeLinkRe
             ?: throw NotFoundException()
         newExchange.name = dto.name
         newExchange.link = dto.link
+        newExchange.code = dto.code
 
         exchangeLinkRepository.save(newExchange)
     }
@@ -45,12 +46,14 @@ class ExchangeLinkServiceImpl(private val exchangeLinkRepository: ExchangeLinkRe
     private fun ExchangeLinkEntity.toDto(): ExchangeLinkDto = ExchangeLinkDto(
         id = this.id,
         name = this.name,
-        link = this.link
+        link = this.link,
+        code = this.code
     )
 
     private fun ExchangeLinkDto.toEntity(): ExchangeLinkEntity = ExchangeLinkEntity(
         id = 0,
         name = this.name,
-        link = this.link
+        link = this.link,
+        code =  this.code
     )
 }

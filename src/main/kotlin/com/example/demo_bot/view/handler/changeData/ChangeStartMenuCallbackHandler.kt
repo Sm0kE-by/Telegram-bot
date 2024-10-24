@@ -12,7 +12,6 @@ class ChangeStartMenuCallbackHandler: ChangeDataCallbackHandler {
 
     override val name: ChangeDataHandlerName = ChangeDataHandlerName.CHANGE_DATA_START_MENU
 
-    //    val callbackCRUDMenu = ChangeDataHandlerName.CRUD_MENU_EXCHANGE.text
     val callbackCRUDMenu = ChangeDataHandlerName.CRUD_MENU.text
 
     val callbackChangeAttributesMenu = ChangeDataHandlerName.CHANGE_ATTRIBUTES.text

@@ -1,5 +1,16 @@
 package com.example.demo_bot.util
 
+fun getRowsOfButton(
+    names: List<String>,
+    callbackNext: String,
+    callbackBack: String
+): List<List<Pair<String, String>>> {
+    var listNames = ArrayList<List<Pair<String, String>>>()
+    if (names.size <= 3) listNames.addAll(getOneRowsOfButtons(names, callbackNext, callbackBack))
+    else if (names.size in 4..8) listNames.addAll(getTwoRowsOfButtons(names, callbackNext, callbackBack))
+    else if (names.size >= 9) listNames.addAll(getThreeRowsOfButtons(names, callbackNext, callbackBack))
+    return listNames
+}
 
 fun getThreeRowsOfButtons(
     names: List<String>,

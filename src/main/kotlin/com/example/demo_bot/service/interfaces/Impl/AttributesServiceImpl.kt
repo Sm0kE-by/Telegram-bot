@@ -21,13 +21,12 @@ class AttributesServiceImpl(
     override fun getById(id: Int): AttributesDto =
         attributesRepository.findByIdOrNull(id)
             ?.toDto()
-            ?: throw NotFoundException()
+            ?: throw NotFoundException("No find Attribute with id: $id")
 
 
     override fun update(id: Int, dto: AttributesDto) {
         val attributes = attributesRepository.findByIdOrNull(id)
             ?: throw NotFoundException()
-        attributes.name = dto.name
         attributes.attribute1 = dto.attribute1
         attributes.attribute2 = dto.attribute2
         attributes.attribute3 = dto.attribute3

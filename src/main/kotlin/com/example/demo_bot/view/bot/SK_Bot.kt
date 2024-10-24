@@ -1,5 +1,7 @@
 package com.example.demo_bot.view.bot
 
+import com.example.demo_bot.service.MessageService
+import com.example.demo_bot.service.dto.UserDto
 import com.example.demo_bot.service.interfaces.*
 import com.example.demo_bot.util.createMessage
 import com.example.demo_bot.view.handler.changeData.ChangeDataCallbackHandler
@@ -32,6 +34,7 @@ class SK_Bot(
     private val gameLinkService: GameLinkService,
     private val socialMediaLinkService: SocialMediaLinkService,
     private val userService: UserService,
+    private val messageService: MessageService,
 ) : TelegramLongPollingCommandBot(token) {
 
     @Value("\${telegram.botName}")
@@ -57,18 +60,22 @@ class SK_Bot(
             val userId = update.message.from.id.toInt()
 
             //Проверка юзера
-            if (userId == userService.getByUserById(userId).id) {
+            if (userVerification(
+                    userId,
+                    update.message.from.firstName,
+                    update.message.from.lastName,
+                    update.message.from.userName
+                )
+            ) {
 
                 if (!mapMessageUser.containsKey(userId)) {
                     mapMessageUser[userId] = MessageUser()
                 }
 
-                if (!mapChangeData.containsKey(userId.toInt())) {
+                if (!mapChangeData.containsKey(userId)) {
                     mapChangeData[userId] = ChangeDataModel()
                 }
 
-              //  val myMessage = messageUserService.getMessageByUserId(userId.toInt())
-              //  val myMessage = mapMessageUser[userId.toInt()]
                 val chatId = update.message.chatId.toString()
 
                 //Проверка команд
@@ -87,20 +94,43 @@ class SK_Bot(
                 } else if (update.message.hasText() && mapMessageUser[userId]?.fromHandler == ChangeDataHandlerName.CREATE_DATA_MESSAGE.text) {
                     mapMessageUser[userId]?.text += update.message.text
 
-
                 } else if (update.message.hasText() && update.message.text.contains("||")) {
                     val listArguments = update.message.text.split("||")
                     //TODO Сделать обработку ошибок
 
-                    when (mapChangeData[userId.toInt()]?.category) {
+                    when (mapChangeData[userId]?.category) {
                         ChangeDataHandlerName.CHANGE_ATTRIBUTES.text -> {
-                            //TODO Сделать на разное количество атрибутов
-                            if (listArguments.size == 5) {
-                                mapChangeData[userId]?.attributes?.attribute1 = listArguments[0]
-                                mapChangeData[userId]?.attributes?.attribute2 = listArguments[1]
-                                mapChangeData[userId]?.attributes?.attribute3 = listArguments[2]
-                                mapChangeData[userId]?.attributes?.attribute4 = listArguments[3]
-                                mapChangeData[userId]?.attributes?.attribute5 = listArguments[4]
+
+                            when (listArguments.size) {
+                                5 -> {
+                                    mapChangeData[userId]?.attributes?.attribute1 = listArguments[0]
+                                    mapChangeData[userId]?.attributes?.attribute2 = listArguments[1]
+                                    mapChangeData[userId]?.attributes?.attribute3 = listArguments[2]
+                                    mapChangeData[userId]?.attributes?.attribute4 = listArguments[3]
+                                    mapChangeData[userId]?.attributes?.attribute5 = listArguments[4]
+                                }
+
+                                4 -> {
+                                    mapChangeData[userId]?.attributes?.attribute1 = listArguments[0]
+                                    mapChangeData[userId]?.attributes?.attribute2 = listArguments[1]
+                                    mapChangeData[userId]?.attributes?.attribute3 = listArguments[2]
+                                    mapChangeData[userId]?.attributes?.attribute4 = listArguments[3]
+                                }
+
+                                3 -> {
+                                    mapChangeData[userId]?.attributes?.attribute1 = listArguments[0]
+                                    mapChangeData[userId]?.attributes?.attribute2 = listArguments[1]
+                                    mapChangeData[userId]?.attributes?.attribute3 = listArguments[2]
+                                }
+
+                                2 -> {
+                                    mapChangeData[userId]?.attributes?.attribute1 = listArguments[0]
+                                    mapChangeData[userId]?.attributes?.attribute2 = listArguments[1]
+                                }
+
+                                1 -> {
+                                    mapChangeData[userId]?.attributes?.attribute1 = listArguments[0]
+                                }
                             }
                         }
 
@@ -130,7 +160,6 @@ class SK_Bot(
                         }
                     }
 
-
                 } else if (update.message.hasText()) {
                     execute(createMessage(chatId, "Вы написали: *${update.message.text}*"))
                     //Если просто фото (надо проверить на наличие заголовка)
@@ -143,7 +172,6 @@ class SK_Bot(
                     )
                     if (update.message.caption != null) mapMessageUser[userId]?.text = update.message.caption!!
                     mapMessageUser[userId]?.listPhoto = listPhotos
-                    //                   messageUserService.update(userId.toInt(), myMessage)
                 } else if (update.message.mediaGroupId != null) {
                     val listPhoto = ArrayList<MessagePhoto>()
                     listPhoto.addAll(mapMessageUser[userId]!!.listPhoto)
@@ -159,22 +187,19 @@ class SK_Bot(
                     execute(createMessage(chatId, "Я понимаю только текст!"))
                     execute(SendMediaGroup())
                 }
-        //        messageUserService.update(userId, mapMessageUser[userId]!!)
             }
-
         } else if (update.hasCallbackQuery()) {
 
             val userId = update.callbackQuery.from.id.toInt()
 
-            if (!mapChangeData.containsKey(userId)) {
-                mapChangeData.put(userId, ChangeDataModel())
-            }
-            if (!mapMessageUser.containsKey(userId)) {
-                mapMessageUser.put(userId, MessageUser())
-            }
-
-            if (userId == userService.getByUserById(userId).id) {
-               // var myMessage = messageUserService.getMessageByUserId(userId.toInt())
+            if (userVerification(
+                    userId,
+                    update.callbackQuery.from.firstName,
+                    update.callbackQuery.from.lastName,
+                    update.callbackQuery.from.userName
+                )
+            ) {
+                // var myMessage = messageUserService.getMessageByUserId(userId.toInt())
                 val callbackQuery = update.callbackQuery
                 val callbackData = callbackQuery.data
                 val chatId = callbackQuery.message?.chatId.toString()
@@ -215,22 +240,22 @@ class SK_Bot(
 
                     CreatePostHandlerName.CREATE_POST_ABOUT_CRYPTO.text -> {
                         mapMessageUser[userId]?.fromHandler = CreatePostHandlerName.CREATE_POST_ABOUT_CRYPTO.text
-                        getHashTage(CreatePostHandlerName.CREATE_POST_ABOUT_CRYPTO.text, mapMessageUser[userId]!!)
+                        getHashTage(1, userId)
                     }
 
                     CreatePostHandlerName.INVITE_NEW_GAME.text -> {
                         mapMessageUser[userId]?.fromHandler = CreatePostHandlerName.INVITE_NEW_GAME.text
-                        getHashTage(CreatePostHandlerName.INVITE_NEW_GAME.text, mapMessageUser[userId]!!)
+                        getHashTage(4, userId)
                     }
 
                     CreatePostHandlerName.DAILY_TASKS_IN_GAMES.text -> {
                         mapMessageUser[userId]?.fromHandler = CreatePostHandlerName.DAILY_TASKS_IN_GAMES.text
-                        getHashTage(CreatePostHandlerName.DAILY_TASKS_IN_GAMES.text, mapMessageUser[userId]!!)
+                        getHashTage(2, userId)
                     }
 
                     CreatePostHandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> {
                         mapMessageUser[userId]?.fromHandler = CreatePostHandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text
-                        getHashTage(CreatePostHandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text, mapMessageUser[userId]!!)
+                        getHashTage(3, userId)
                     }
 
                     CreatePostHandlerName.CREATE_MESSAGE.text -> {
@@ -239,13 +264,14 @@ class SK_Bot(
                             when (mapMessageUser[userId]?.fromHandler) {
                                 CreatePostHandlerName.DAILY_TASKS_IN_GAMES.text -> {
                                     val dto = gameLinkService.getByName(callbackArguments[1])
-                                    mapMessageUser[userId]?.link = "[${dto.name}]${dto.link} - начни играть прямо сейчас!!!"
+                                    mapMessageUser[userId]?.link =
+                                        "<a href=\"${dto.link}\">${dto.name}</a> - начни играть прямо сейчас!!!"
                                 }
 
                                 CreatePostHandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> {
                                     val dto = exchangeLinkService.getByName(callbackArguments[1])
                                     mapMessageUser[userId]?.link =
-                                        "[${dto.name}](${dto.link}) - регистрируйся прямо сейчас и получай крутой бонус по моей реферальной ссылке!!!"
+                                        "<a href=\"${dto.link}\">${dto.name}</a> - регистрируйся прямо сейчас, или введи мой реферальный код <b>${dto.code}</b>, и получай крутой бонус по моей реферальной ссылке!!!"
                                 }
                             }
                         }
@@ -253,10 +279,10 @@ class SK_Bot(
                     }
 
                     CreatePostHandlerName.MESSAGE_SKETCH.text -> {
-                        mapMessageUser[userId]?.title = "[SKcrypto](https://t.me/DefiSKcrypto)"
+                        mapMessageUser[userId]?.title = "<a href=\"https://t.me/DefiSKcrypto\"><b>SKcrypto</b></a>"
                         mapMessageUser[userId]?.socialLink = ""
                         val dto = socialMediaLinkService.getAll()
-                        dto.forEach { mapMessageUser[userId]?.socialLink += "[${it.name}](${it.link}) " }
+                        dto.forEach { mapMessageUser[userId]?.socialLink += "<a href=\"${it.link}\">${it.name}</a> " }
 
                     }
 
@@ -306,8 +332,6 @@ class SK_Bot(
                     }
                 }
 
-      //          messageUserService.update(userId, mapMessageUser[userId]!!)
-
                 if (handlerMappingCreatePost.containsKey(callbackHandlerName))
                     handlerMappingCreatePost.getValue(callbackHandlerName)
                         .myProcessCallbackData(
@@ -316,23 +340,47 @@ class SK_Bot(
                             mapMessageUser[userId]!!
                         )
                 else if (handlerMappingChangeData.containsKey(callbackHandlerName)) {
-
-  //                  if (mapMessageUser[userId]?.fromHandler == ChangeDataHandlerName.CREATE_DATA_MESSAGE.text) {
-                        handlerMappingChangeData.getValue(callbackHandlerName)
-                            .myProcessCallbackData(
-                                absSender = this,
-                                chatId = chatId,
-                                changeDataModel = mapChangeData.getValue(userId)
-                            )
-                   // }
+                    handlerMappingChangeData.getValue(callbackHandlerName)
+                        .myProcessCallbackData(
+                            absSender = this,
+                            chatId = chatId,
+                            changeDataModel = mapChangeData.getValue(userId)
+                        )
                 }
             }
         }
     }
 
-    fun getHashTage(param: String, message: MessageUser) {
-        //TODO сделать проверку на количество хештегов, пока отображаются все 5
-        val dto = attributesService.getByName(param)
-        message.hashTage = "${dto.attribute1} ${dto.attribute2} ${dto.attribute3} ${dto.attribute4} ${dto.attribute5}"
+    fun getHashTage(id: Int, userId: Int) {
+        val dto = attributesService.getById(id = id)
+        if (dto.attribute1 != "") mapMessageUser[userId]?.hashTage += "#${dto.attribute1}  "
+        if (dto.attribute2 != "") mapMessageUser[userId]?.hashTage += "#${dto.attribute2}  "
+        if (dto.attribute3 != "") mapMessageUser[userId]?.hashTage += "#${dto.attribute3}  "
+        if (dto.attribute4 != "") mapMessageUser[userId]?.hashTage += "#${dto.attribute4}  "
+        if (dto.attribute5 != "") mapMessageUser[userId]?.hashTage += "#${dto.attribute5}  "
+    }
+
+    private fun userVerification(
+        userId: Int,
+        firstName: String,
+        lastName: String,
+        userName: String
+    ): Boolean {
+        var result = false
+        if (mapMessageUser.containsKey(userId) && mapChangeData.containsKey(userId)) result = true
+        else if (userService.searchByUserById(userId)) result = true
+        else if (userName == "KIBAB177" || userName == "Smoke_by") {
+            val userDto = UserDto(
+                id = userId,
+                firstName = firstName,
+                lastName = lastName,
+                userName = userName
+            )
+            userService.create(userDto)
+            mapMessageUser[userId] = MessageUser()
+            mapChangeData[userId] = ChangeDataModel()
+            result = true
+        }
+        return result
     }
 }

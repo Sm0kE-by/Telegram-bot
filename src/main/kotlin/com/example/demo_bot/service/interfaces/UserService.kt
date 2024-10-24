@@ -6,5 +6,7 @@ interface UserService {
 
     fun getByUserById(id: Int): UserDto
 
-    fun create(user: UserDto): UserDto
+    fun searchByUserById(id: Int): Boolean
+
+    fun create(user: UserDto)
 }

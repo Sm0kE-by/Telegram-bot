@@ -10,5 +10,6 @@ class ExchangeLinkEntity (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int = 0,
     var name: String = "",
-    var link: String = ""
+    var link: String = "",
+    var code: String = ""
 )
