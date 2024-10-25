@@ -1,5 +1,6 @@
 package com.example.demo_bot.view.handler.createPost
 
+import com.example.demo_bot.service.MessageService
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import com.example.demo_bot.util.*
 import com.example.demo_bot.view.model.MessageUser
@@ -7,7 +8,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class MessageSketchHandler() : CreatePostCallbackHandler {
+class MessageSketchHandler(private val messageService: MessageService) : CreatePostCallbackHandler {
 
     companion object {
         const val TEXT_SIZE = 4096
@@ -26,7 +27,7 @@ class MessageSketchHandler() : CreatePostCallbackHandler {
     ) {
 
         if (message.text.isEmpty() && message.listPhoto.isEmpty()) {
-            absSender.execute(createMessage(chatId, "Вы не ввели сообщение!!!"))
+            absSender.execute(createMessage(chatId, messageService.getMessage("createPost.notEnteredMessage")))
         } else if (message.text.isNotEmpty() && message.listPhoto.isEmpty()) {
             saveMessageTextForDb(absSender, chatId, message, TEXT_SIZE)
             absSender.execute(
@@ -34,8 +35,8 @@ class MessageSketchHandler() : CreatePostCallbackHandler {
                     chatId = chatId,
                     text = message.text,
                     inlineButtons = listOf(
-                        listOf("$callbackSend|send" to "Отправить пост"),
-                        listOf("$callbackBack|back" to "Назад"),
+                        listOf("$callbackSend|send" to messageService.getMessage("button.sendPost")),
+                        listOf("$callbackBack|back" to messageService.getMessage("button.back")),
                     ),
                 )
             )
@@ -46,8 +47,8 @@ class MessageSketchHandler() : CreatePostCallbackHandler {
                 chatId = chatId,
                 message = message,
                 inlineButtons = listOf(
-                    listOf("$callbackSend|send" to "Отправить пост"),
-                    listOf("$callbackBack|back" to "Назад"),
+                    listOf("$callbackSend|send" to messageService.getMessage("button.sendPost")),
+                    listOf("$callbackBack|back" to messageService.getMessage("button.back")),
                 ),
             )
 
@@ -71,9 +72,16 @@ class MessageSketchHandler() : CreatePostCallbackHandler {
         else {
             absSender.execute(
                 createMessage(
-                    chatId, "Текст слишком длинный! " +
-                            "Максимальное количество символов должно составлять -> $textSize, а Ваше сообщение содержит ${text.length}. " +
-                            "Удалите, пожалуйста ${text.length - textSize} символ(а, ов), или составте другое сообщение."
+                    chatId,
+//                    "Текст слишком длинный! " +
+//                            "Максимальное количество символов должно составлять -> $textSize, а Ваше сообщение содержит ${text.length}. " +
+//                            "Удалите, пожалуйста ${text.length - textSize} символ(а, ов), или составте другое сообщение."
+                    messageService.getMessage(
+                        "createPost.askTextIsTooLong.regexp",
+                        textSize,
+                        text.length,
+                        text.length - textSize
+                    )
                 )
             )
             text = ""

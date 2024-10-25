@@ -1,5 +1,6 @@
 package com.example.demo_bot.view.handler.changeData
 
+import com.example.demo_bot.service.MessageService
 import com.example.demo_bot.service.dto.AttributesDto
 import com.example.demo_bot.service.dto.ExchangeLinkDto
 import com.example.demo_bot.service.dto.GameLinkDto
@@ -16,12 +17,13 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class SketchDataCallbackHandler(
+class SketchDataHandler(
     private val exchangeLinkService: ExchangeLinkService,
     private val attributesService: AttributesService,
     private val gameLinkService: GameLinkService,
     private val socialMediaLinkService: SocialMediaLinkService,
-) : ChangeDataCallbackHandler {
+    private val messageService: MessageService
+) : ChangeDataHandler {
 
     companion object {
         const val ERROR_DATA_ID = "error data id"
@@ -31,7 +33,7 @@ class SketchDataCallbackHandler(
     override val name: ChangeDataHandlerName = ChangeDataHandlerName.SKETCH_DATA
 
     val callbackNext = ChangeDataHandlerName.SAVE_DATA.text
-    val callbackBack = ChangeDataHandlerName.CHANGE_DATA_MESSAGE.text
+    val callbackBack = ChangeDataHandlerName.CRUD_MENU.text
 
     override fun myProcessCallbackData(absSender: AbsSender, chatId: String, changeDataModel: ChangeDataModel) {
 
@@ -42,25 +44,24 @@ class SketchDataCallbackHandler(
             && changeDataModel.socialLink.name == ""
             && changeDataModel.operation != ChangeDataHandlerName.DELETE_DATA.text
         ) {
-            absSender.execute(createMessage(chatId, "Вы не ввели сообщение!!!"))
+            absSender.execute(createMessage(chatId, messageService.getMessage("createPost.notEnteredMessage")))
         } else {
             val textMessage = getSketchText(changeDataModel)
-            if (textMessage != ERROR_DATA_ID) {
+            if (textMessage != ERROR_DATA_ID && textMessage != DATA_INTEGRITY_ERROR) {
                 absSender.execute(
                     createTextDialogMenu(
                         chatId = chatId,
                         text = textMessage,
                         inlineButtons = listOf(
-                            listOf(callbackNext to "Сохранить изменения"),
-                            listOf(callbackBack to "Назад"),
+                            listOf(callbackNext to messageService.getMessage("button.saveChanges")),
+                            listOf(callbackBack to messageService.getMessage("button.back")),
                         ),
                     )
                 )
             } else {
                 absSender.execute(
                     createMessage(
-                        chatId, "Сообщение введено неверно!!! \n<b>Пример:</b>\n" +
-                                "название биржи||реферальную ссылку на аккаунт||реферальный код"
+                        chatId, messageService.getMessage("changeDate.messageWasEnteredIncorrectly")
                     )
                 )
             }
@@ -116,21 +117,21 @@ class SketchDataCallbackHandler(
                     val hashTag = attributesService.getById(attributes.id!!)
 
                     text = """
-                <b>Старые данные:</b>
-                <b>Название ХешТега</b> => ${hashTag.name}
-                <b>Атрибут 1</b> => ${hashTag.attribute1}
-                <b>Атрибут 2</b> => ${hashTag.attribute2}
-                <b>Атрибут 3</b> => ${hashTag.attribute3}
-                <b>Атрибут 4</b> => ${hashTag.attribute4}
-                <b>Атрибут 5</b> => ${hashTag.attribute5}
+                <b>${messageService.getMessage("changeDate.oldData")}</b>
+                <b>${messageService.getMessage("changeDate.hashtagName")}</b> => ${hashTag.name}
+                <b>${messageService.getMessage("changeDate.attribute1")}</b> => ${hashTag.attribute1}
+                <b>${messageService.getMessage("changeDate.attribute2")}</b> => ${hashTag.attribute2}
+                <b>${messageService.getMessage("changeDate.attribute3")}</b> => ${hashTag.attribute3}
+                <b>${messageService.getMessage("changeDate.attribute4")}</b> => ${hashTag.attribute4}
+                <b>${messageService.getMessage("changeDate.attribute5")}</b> => ${hashTag.attribute5}
                                         
-                <b>Новые данные:</b>
-                <b>Название ХешТега</b> => ${hashTag.name}
-                <b>Атрибут 1</b> => ${attributes.attribute1}
-                <b>Атрибут 2</b> => ${attributes.attribute2}
-                <b>Атрибут 3</b> => ${attributes.attribute3}
-                <b>Атрибут 4</b> => ${attributes.attribute4}
-                <b>Атрибут 5</b> => ${attributes.attribute5}""".trimIndent()
+                <b>${messageService.getMessage("changeDate.newData")}</b>
+                <b>${messageService.getMessage("changeDate.hashtagName")}</b> => ${hashTag.name}
+                <b>${messageService.getMessage("changeDate.attribute1")}</b> => ${attributes.attribute1}
+                <b>${messageService.getMessage("changeDate.attribute2")}</b> => ${attributes.attribute2}
+                <b>${messageService.getMessage("changeDate.attribute3")}</b> => ${attributes.attribute3}
+                <b>${messageService.getMessage("changeDate.attribute4")}</b> => ${attributes.attribute4}
+                <b>${messageService.getMessage("changeDate.attribute5")}</b> => ${attributes.attribute5}""".trimIndent()
                 } else text = ERROR_DATA_ID
             }
         }
@@ -144,25 +145,25 @@ class SketchDataCallbackHandler(
         when (operation) {
             ChangeDataHandlerName.CREATE_DATA.text -> {
                 text = """
-                <b>Новые данные:</b>
-                <b>Название биржи</b> => ${exchange.name}
-                <b>Реферальная ссылка на аккаунт</b> => ${exchange.link}
-                <b>Реферальный код</b> => ${exchange.code}""".trimIndent()
+                <b>${messageService.getMessage("changeDate.newData")}</b>
+                <b>${messageService.getMessage("changeDate.exchangeName")}</b> => ${exchange.name}
+                <b>${messageService.getMessage("changeDate.referralLinkToAccount")}</b> => ${exchange.link}
+                <b>${messageService.getMessage("changeDate.referralCode")}</b> => ${exchange.code}""".trimIndent()
             }
 
             ChangeDataHandlerName.UPDATE_DATA.text -> {
                 if (exchange.id != null) {
                     val oldExchange = exchangeLinkService.getById(exchange.id!!)
                     text = """
-                <b>Старые данные:</b>
-                <b>Название биржи</b> => ${oldExchange.name}
-                <b>Реферальную ссылку на аккаунт</b> => ${oldExchange.link}
-                <b>Реферальный код</b> => ${oldExchange.code}
+                <b>${messageService.getMessage("changeDate.oldData")}</b>
+                <b>${messageService.getMessage("changeDate.exchangeName")}</b> => ${oldExchange.name}
+                <b>${messageService.getMessage("changeDate.referralLinkToAccount")}</b> => ${oldExchange.link}
+                <b>${messageService.getMessage("changeDate.referralCode")}</b> => ${oldExchange.code}
                         
-                <b>Новые данные:</b>
-                <b>Название биржи</b> => ${exchange.name}
-                <b>Реферальную ссылку на аккаунт</b> => ${exchange.link}
-                <b>Реферальный код</b> => ${exchange.code}""".trimIndent()
+                <b>${messageService.getMessage("changeDate.newData")}</b>
+                <b>${messageService.getMessage("changeDate.exchangeName")}</b> => ${exchange.name}
+                <b>${messageService.getMessage("changeDate.referralLinkToAccount")}</b> => ${exchange.link}
+                <b>${messageService.getMessage("changeDate.referralCode")}</b> => ${exchange.code}""".trimIndent()
                 } else text = ERROR_DATA_ID
             }
 
@@ -170,10 +171,10 @@ class SketchDataCallbackHandler(
                 if (exchange.id != null) {
                     val oldExchange = exchangeLinkService.getById(exchange.id!!)
                     text = """
-                <b>Удалить данные:</b>
-                <b>Название биржи</b> => ${oldExchange.name}
-                <b>Реферальную ссылку на аккаунт</b> => ${oldExchange.link}
-                <b>Реферальный код</b> => ${oldExchange.code}""".trimIndent()
+                <b>${messageService.getMessage("changeDate.deleteData")}</b>
+                <b>${messageService.getMessage("changeDate.exchangeName")}</b> => ${oldExchange.name}
+                <b>${messageService.getMessage("changeDate.referralLinkToAccount")}</b> => ${oldExchange.link}
+                <b>${messageService.getMessage("changeDate.referralCode")}</b> => ${oldExchange.code}""".trimIndent()
                 } else text = ERROR_DATA_ID
             }
         }
@@ -184,24 +185,24 @@ class SketchDataCallbackHandler(
         var text = ""
         when (operation) {
             ChangeDataHandlerName.CREATE_DATA.text -> text = """
-                <b>Новые данные:</b>
-                <b>Название игры</b> => ${game.name}
-                <b>Реферальная ссылка на игру</b> => ${game.link}
-                <b>Ссылка на наш Клан</b> => ${game.clanLink}""".trimIndent()
+                <b>${messageService.getMessage("changeDate.newData")}</b>
+                <b>${messageService.getMessage("changeDate.gameName")}</b> => ${game.name}
+                <b>${messageService.getMessage("changeDate.referralLinkToGame")}</b> => ${game.link}
+                <b>${messageService.getMessage("changeDate.referralLinkToClan")}</b> => ${game.clanLink}""".trimIndent()
 
             ChangeDataHandlerName.UPDATE_DATA.text -> {
                 if (game.id != null) {
                     val oldGame = gameLinkService.getById(game.id!!)
                     text = """
-                <b>Старые данные:</b>
-                <b>Название игры</b> => ${oldGame.name}
-                <b>Реферальная ссылка на игру</b> => ${oldGame.link}
-                <b>Ссылка на наш Клан</b> => ${oldGame.name}
+                <b>${messageService.getMessage("changeDate.oldData")}</b>
+                <b>${messageService.getMessage("changeDate.gameName")}</b> => ${oldGame.name}
+                <b>${messageService.getMessage("changeDate.referralLinkToGame")}</b> => ${oldGame.link}
+                <b>${messageService.getMessage("changeDate.referralLinkToClan")}</b> => ${oldGame.name}
                         
-                <b>Новые данные:</b>
-                <b>Название игры</b> => ${game.name}
-                <b>Реферальная ссылка на игру</b> => ${game.link}
-                <b>Ссылка на наш Клан</b> => ${game.link}""".trimIndent()
+                <b>${messageService.getMessage("changeDate.newData")}</b>
+                <b>${messageService.getMessage("changeDate.gameName")}</b> => ${game.name}
+                <b>${messageService.getMessage("changeDate.referralLinkToGame")}</b> => ${game.link}
+                <b>${messageService.getMessage("changeDate.referralLinkToClan")}</b> => ${game.link}""".trimIndent()
                 } else text = ERROR_DATA_ID
             }
 
@@ -209,10 +210,10 @@ class SketchDataCallbackHandler(
                 if (game.id != null) {
                     val oldGame = gameLinkService.getById(game.id!!)
                     text = """
-                <b>Удалить данные:</b>
-                <b>Название игры</b> => ${oldGame.name}
-                <b>Реферальная ссылка на игру</b> => ${oldGame.link}
-                <b>Ссылка на наш Клан</b> => ${oldGame.name}""".trimIndent()
+                <b>${messageService.getMessage("changeDate.deleteData")}</b>
+                <b>${messageService.getMessage("changeDate.gameName")}</b> => ${oldGame.name}
+                <b>${messageService.getMessage("changeDate.referralLinkToGame")}</b> => ${oldGame.link}
+                <b>${messageService.getMessage("changeDate.referralLinkToClan")}</b> => ${oldGame.name}""".trimIndent()
                 } else text = ERROR_DATA_ID
             }
         }
@@ -223,21 +224,21 @@ class SketchDataCallbackHandler(
         var text = ""
         when (operation) {
             ChangeDataHandlerName.CREATE_DATA.text -> text = """
-                <b>Новые данные:</b>
-                <b>Название Социальной сети</b> => ${socialMedia.name}
-                <b>Ссылка на Социальную сеть</b> => ${socialMedia.link}""".trimIndent()
+                <b>${messageService.getMessage("changeDate.newData")}</b>
+                <b>${messageService.getMessage("changeDate.socialNetworkName")}</b> => ${socialMedia.name}
+                <b>${messageService.getMessage("changeDate.LinkToSocialNetwork")}</b> => ${socialMedia.link}""".trimIndent()
 
             ChangeDataHandlerName.UPDATE_DATA.text -> {
                 if (socialMedia.id != null) {
                     val oldSocialLink = socialMediaLinkService.getById(socialMedia.id!!)
                     text = """
-                <b>Старые данные:</b>
-                <b>Название Социальной сети</b> => ${oldSocialLink.name}
-                <b>Ссылка на Социальную сеть</b> => ${oldSocialLink.link}                
+                <b>${messageService.getMessage("changeDate.oldData")}</b>
+                <b>${messageService.getMessage("changeDate.socialNetworkName")}</b> => ${oldSocialLink.name}
+                <b>${messageService.getMessage("changeDate.LinkToSocialNetwork")}</b> => ${oldSocialLink.link}                
                         
-                <b>Новые данные:</b>
-                <b>Название Социальной сети</b> => ${socialMedia.name}
-                <b>Ссылка на Социальную сеть</b> => ${socialMedia.link}""".trimIndent()
+                <b>${messageService.getMessage("changeDate.newData")}</b>
+                <b>${messageService.getMessage("changeDate.socialNetworkName")}</b> => ${socialMedia.name}
+                <b>${messageService.getMessage("changeDate.LinkToSocialNetwork")}</b> => ${socialMedia.link}""".trimIndent()
                 } else text = ERROR_DATA_ID
             }
 
@@ -245,9 +246,9 @@ class SketchDataCallbackHandler(
                 if (socialMedia.id != null) {
                     val oldSocialLink = socialMediaLinkService.getById(socialMedia.id!!)
                     text = """
-                <b>Удалить данные:</b>
-                <b>Название Социальной сети</b> => ${oldSocialLink.name}
-                <b>Ссылка на Социальную сеть</b> => ${oldSocialLink.link}""".trimIndent()
+                <b>${messageService.getMessage("changeDate.deleteData")}</b>
+                <b>${messageService.getMessage("changeDate.socialNetworkName")}</b> => ${oldSocialLink.name}
+                <b>${messageService.getMessage("changeDate.LinkToSocialNetwork")}</b> => ${oldSocialLink.link}""".trimIndent()
                 } else text = ERROR_DATA_ID
             }
         }

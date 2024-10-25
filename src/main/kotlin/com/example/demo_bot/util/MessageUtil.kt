@@ -1,5 +1,6 @@
 package com.example.demo_bot.util
 
+import com.example.demo_bot.service.MessageService
 import com.example.demo_bot.view.model.MessageUser
 import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup

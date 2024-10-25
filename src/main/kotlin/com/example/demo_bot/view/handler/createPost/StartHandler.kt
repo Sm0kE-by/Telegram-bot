@@ -1,5 +1,6 @@
 package com.example.demo_bot.view.handler.createPost
 
+import com.example.demo_bot.service.MessageService
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import com.example.demo_bot.util.createTextDialogMenu
 import com.example.demo_bot.view.model.MessageUser
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class StartHandler : CreatePostCallbackHandler {
+class StartHandler(private val messageService: MessageService) : CreatePostCallbackHandler {
 
     val callbackCreatePost = CreatePostHandlerName.CREATE_POST_MENU.text
     val callbackChangeAttributes = ChangeDataHandlerName.CHANGE_DATA_START_MENU.text
@@ -24,10 +25,10 @@ class StartHandler : CreatePostCallbackHandler {
         absSender.execute(
             createTextDialogMenu(
                 chatId,
-                "Добро пожаловать в нашего бота! Выбирите одны из функций!",
+                messageService.getMessage("createPost.askStartHandler"),
                 listOf(
-                    listOf("$callbackCreatePost|create_post" to "Создать пост"),
-                    listOf("$callbackChangeAttributes|change_attributes" to "Изменить атрибуты"),
+                    listOf("$callbackCreatePost|create_post" to messageService.getMessage("button.createPost")),
+                    listOf("$callbackChangeAttributes|change_attributes" to messageService.getMessage("button.changeData")),
                 ),
             )
         )

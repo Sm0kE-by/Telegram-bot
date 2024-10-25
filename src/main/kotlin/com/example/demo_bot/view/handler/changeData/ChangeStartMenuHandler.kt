@@ -1,5 +1,6 @@
 package com.example.demo_bot.view.handler.changeData
 
+import com.example.demo_bot.service.MessageService
 import com.example.demo_bot.util.createTextDialogMenu
 import com.example.demo_bot.view.model.ChangeDataModel
 import com.example.demo_bot.view.model.enums.ChangeDataHandlerName
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class ChangeStartMenuCallbackHandler: ChangeDataCallbackHandler {
+class ChangeStartMenuHandler(private val messageService: MessageService): ChangeDataHandler {
 
     override val name: ChangeDataHandlerName = ChangeDataHandlerName.CHANGE_DATA_START_MENU
 
@@ -24,13 +25,13 @@ class ChangeStartMenuCallbackHandler: ChangeDataCallbackHandler {
         absSender.execute(
             createTextDialogMenu(
                 chatId,
-                "Выберите пункт для редактирования",
+                messageService.getMessage("changeDate.askChangeStartMenuHandler"),
                 listOf(
-                    listOf("$callbackCRUDMenu|$callbackChangeAttributesMenu" to "HashTags"),
-                    listOf("$callbackCRUDMenu|$callbackChangeExchangeMenu" to "Криптобиржи"),
-                    listOf("$callbackCRUDMenu|$callbackChangeGameMenu" to "Игры"),
-                    listOf("$callbackCRUDMenu|$callbackChangeSocialMediaMenu" to "Социальные сети"),
-                    listOf(callbackBack to "Назад"),
+                    listOf("$callbackCRUDMenu|$callbackChangeAttributesMenu" to messageService.getMessage("button.hashtags")),
+                    listOf("$callbackCRUDMenu|$callbackChangeExchangeMenu" to messageService.getMessage("button.cryptoExchanges")),
+                    listOf("$callbackCRUDMenu|$callbackChangeGameMenu" to messageService.getMessage("button.games")),
+                    listOf("$callbackCRUDMenu|$callbackChangeSocialMediaMenu" to messageService.getMessage("button.socialNetworks")),
+                    listOf(callbackBack to messageService.getMessage("button.back")),
                 ),
             )
         )

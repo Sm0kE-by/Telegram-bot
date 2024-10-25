@@ -1,5 +1,6 @@
 package com.example.demo_bot.view.handler.changeData
 
+import com.example.demo_bot.service.MessageService
 import com.example.demo_bot.service.dto.ExchangeLinkDto
 import com.example.demo_bot.service.dto.GameLinkDto
 import com.example.demo_bot.service.dto.SocialMediaLinkDto
@@ -13,11 +14,12 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class ChangeDataMessageCallbackHandler(
+class ChangeDataMessageHandler(
     private val exchangeLinkService: ExchangeLinkService,
     private val gameLinkService: GameLinkService,
     private val socialMediaLinkService: SocialMediaLinkService,
-) : ChangeDataCallbackHandler {
+    private val messageService: MessageService
+) : ChangeDataHandler {
 
     override val name: ChangeDataHandlerName = ChangeDataHandlerName.CHANGE_DATA_MESSAGE
 
@@ -40,8 +42,8 @@ class ChangeDataMessageCallbackHandler(
                 chatId = chatId,
                 text = text,
                 inlineButtons = listOf(
-                    listOf(nextCallback to "Далее"),
-                    listOf(backCallback to "Назад"),
+                    listOf(nextCallback to messageService.getMessage("button.next")),
+                    listOf(backCallback to messageService.getMessage("button.back")),
                 ),
             )
         )
@@ -81,21 +83,21 @@ class ChangeDataMessageCallbackHandler(
     private fun getExchangePresentationText(operation: String, exchange: ExchangeLinkDto): String =
         when (operation) {
             ChangeDataHandlerName.CREATE_DATA.text -> getSampleCreateUpdateText(
-                "название биржи",
-                "реферальная ссылка на аккаунт",
-                "реферальный код"
+                messageService.getMessage("changeDate.exchangeName"),
+                messageService.getMessage("changeDate.referralLinkToAccount"),
+                messageService.getMessage("changeDate.referralCode")
             )
 
             ChangeDataHandlerName.UPDATE_DATA.text -> getSampleCreateUpdateText(
-                "название биржи",
-                "реферальная ссылка на аккаунт",
-                "реферальный код"
+                messageService.getMessage("changeDate.exchangeName"),
+                messageService.getMessage("changeDate.referralLinkToAccount"),
+                messageService.getMessage("changeDate.referralCode")
             )
 
             ChangeDataHandlerName.DELETE_DATA.text -> {
                 //TODO проверка на Налл нужна или нет
                 val nameExchange = exchange.id?.let { exchangeLinkService.getById(it).name }
-                getSampleDeleteText(nameExchange!!, "КриптоБиржи")
+                getSampleDeleteText(nameExchange!!, messageService.getMessage("button.cryptoExchanges"))
             }
 
             else -> ""
@@ -105,21 +107,21 @@ class ChangeDataMessageCallbackHandler(
     private fun getGamePresentationText(operation: String, game: GameLinkDto): String =
         when (operation) {
             ChangeDataHandlerName.CREATE_DATA.text -> getSampleCreateUpdateText(
-                "название игры",
-                "реферальная ссылка на игру",
-                "реферальный код на Наш клан, если такой имеется"
+                messageService.getMessage("changeDate.gameName"),
+                messageService.getMessage("changeDate.referralLinkToGame"),
+                messageService.getMessage("changeDate.referralLinkToClanIfThereIsOne")
             )
 
             ChangeDataHandlerName.UPDATE_DATA.text -> getSampleCreateUpdateText(
-                "название игры",
-                "реферальная ссылка на игру",
-                "реферальный код на Наш клан, если такой имеется"
+                messageService.getMessage("changeDate.gameName"),
+                messageService.getMessage("changeDate.referralLinkToGame"),
+                messageService.getMessage("changeDate.referralLinkToClanIfThereIsOne")
             )
 
             ChangeDataHandlerName.DELETE_DATA.text -> {
                 //TODO проверка на Налл нужна или нет
                 val nameGame = game.id?.let { gameLinkService.getById(it).name }
-                getSampleDeleteText(nameGame!!, "Игры")
+                getSampleDeleteText(nameGame!!, messageService.getMessage("button.games"))
             }
 
             else -> ""
@@ -129,19 +131,19 @@ class ChangeDataMessageCallbackHandler(
     private fun getSocialMediaPresentationText(operation: String, socialMedia: SocialMediaLinkDto): String =
         when (operation) {
             ChangeDataHandlerName.CREATE_DATA.text -> getSampleCreateUpdateText(
-                "название социальной сети",
-                "ссылка на социальную сеть",
+                messageService.getMessage("changeDate.socialNetworkName"),
+                messageService.getMessage("changeDate.LinkToSocialNetwork"),
             )
 
             ChangeDataHandlerName.UPDATE_DATA.text -> getSampleCreateUpdateText(
-                "название социальной сети",
-                "ссылка на социальную сеть",
+                messageService.getMessage("changeDate.socialNetworkName"),
+                messageService.getMessage("changeDate.LinkToSocialNetwork"),
             )
 
             ChangeDataHandlerName.DELETE_DATA.text -> {
                 //TODO проверка на Налл нужна или нет
                 val nameSocialMedia = socialMedia.id?.let { socialMediaLinkService.getById(it).name }
-                getSampleDeleteText(nameSocialMedia!!, "Игры")
+                getSampleDeleteText(nameSocialMedia!!, messageService.getMessage("button.socialNetworks"))
             }
 
             else -> ""

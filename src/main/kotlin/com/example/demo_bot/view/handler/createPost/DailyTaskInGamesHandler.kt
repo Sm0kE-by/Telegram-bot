@@ -1,6 +1,6 @@
 package com.example.demo_bot.view.handler.createPost
 
-import com.example.demo_bot.service.dto.GameLinkDto
+import com.example.demo_bot.service.MessageService
 import com.example.demo_bot.service.interfaces.GameLinkService
 import com.example.demo_bot.view.model.enums.CommandName
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
@@ -11,8 +11,9 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class DailyTaskInGames(
-    private val gameLinkService: GameLinkService
+class DailyTaskInGamesHandler(
+    private val gameLinkService: GameLinkService,
+    private val messageService: MessageService,
 ) : CreatePostCallbackHandler {
 
     override val name: CreatePostHandlerName = CreatePostHandlerName.DAILY_TASKS_IN_GAMES
@@ -30,7 +31,7 @@ class DailyTaskInGames(
         absSender.execute(
             createTextDialogMenu(
                 chatId,
-                "Выберите игру",
+                messageService.getMessage("createPost.askDailyTaskInGamesHandler"),
                 getRowsOfButton(listGameName, callbackCreateMessage, callbackBack),
             )
         )

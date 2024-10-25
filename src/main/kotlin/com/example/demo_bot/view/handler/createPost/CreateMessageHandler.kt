@@ -1,5 +1,6 @@
 package com.example.demo_bot.view.handler.createPost
 
+import com.example.demo_bot.service.MessageService
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import com.example.demo_bot.util.createTextDialogMenu
 import com.example.demo_bot.view.model.MessageUser
@@ -8,7 +9,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 
 
 @Component
-class CreateMessageHandler : CreatePostCallbackHandler {
+class CreateMessageHandler(private val messageService: MessageService) : CreatePostCallbackHandler {
 
     override val name: CreatePostHandlerName = CreatePostHandlerName.CREATE_MESSAGE
 
@@ -23,10 +24,10 @@ class CreateMessageHandler : CreatePostCallbackHandler {
         absSender.execute(
             createTextDialogMenu(
                 chatId,
-                "Введите текс сообщения",
+                messageService.getMessage("createPost.askCreateMessageHandler"),
                 listOf(
-                    listOf("$callbackNext|next" to "Далее"),
-                    listOf("$callbackBack|back" to "Назад"),
+                    listOf(callbackNext to messageService.getMessage("button.next")),
+                    listOf(callbackBack to messageService.getMessage("button.back")),
                 ),
             )
         )

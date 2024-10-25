@@ -1,5 +1,6 @@
 package com.example.demo_bot.view.handler.changeData
 
+import com.example.demo_bot.service.MessageService
 import com.example.demo_bot.service.dto.AttributesDto
 import com.example.demo_bot.service.dto.ExchangeLinkDto
 import com.example.demo_bot.service.dto.GameLinkDto
@@ -16,12 +17,13 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class SaveDataCallbackHandler(
+class SaveDataHandler(
     private val exchangeLinkService: ExchangeLinkService,
     private val attributesService: AttributesService,
     private val gameLinkService: GameLinkService,
     private val socialMediaLinkService: SocialMediaLinkService,
-) : ChangeDataCallbackHandler {
+    private val messageService: MessageService
+) : ChangeDataHandler {
 
     override val name: ChangeDataHandlerName = ChangeDataHandlerName.SAVE_DATA
 
@@ -32,9 +34,9 @@ class SaveDataCallbackHandler(
         absSender.execute(
             createTextDialogMenu(
                 chatId = chatId,
-                text = "Операция выполнена успешно.",
+                text = messageService.getMessage("changeDate.askSaveDataHandler"),
                 inlineButtons = listOf(
-                    listOf(callbackDone to "Готово"),
+                    listOf(callbackDone to messageService.getMessage("button.Done")),
                 ),
             )
         )

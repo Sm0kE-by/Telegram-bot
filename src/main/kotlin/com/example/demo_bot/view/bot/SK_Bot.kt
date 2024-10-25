@@ -4,7 +4,7 @@ import com.example.demo_bot.service.MessageService
 import com.example.demo_bot.service.dto.UserDto
 import com.example.demo_bot.service.interfaces.*
 import com.example.demo_bot.util.createMessage
-import com.example.demo_bot.view.handler.changeData.ChangeDataCallbackHandler
+import com.example.demo_bot.view.handler.changeData.ChangeDataHandler
 import com.example.demo_bot.view.handler.createPost.CreatePostCallbackHandler
 import com.example.demo_bot.view.model.ChangeDataModel
 import com.example.demo_bot.view.model.MessagePhoto
@@ -25,7 +25,7 @@ import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope
 @Component
 class SK_Bot(
     callbackHandlersCreatePost: Set<CreatePostCallbackHandler>,
-    callbackHandlersChangeData: Set<ChangeDataCallbackHandler>,
+    callbackHandlersChangeData: Set<ChangeDataHandler>,
     @Value("\${telegram.token}")
     token: String,
     commands: ArrayList<BotCommand>,
@@ -40,7 +40,7 @@ class SK_Bot(
     @Value("\${telegram.botName}")
     private val botName: String = ""
     private lateinit var handlerMappingCreatePost: Map<String, CreatePostCallbackHandler>
-    private lateinit var handlerMappingChangeData: Map<String, ChangeDataCallbackHandler>
+    private lateinit var handlerMappingChangeData: Map<String, ChangeDataHandler>
     private val mapChangeData: HashMap<Int, ChangeDataModel> = hashMapOf()
     private val mapMessageUser: HashMap<Int, MessageUser> = hashMapOf()
 
@@ -161,7 +161,12 @@ class SK_Bot(
                     }
 
                 } else if (update.message.hasText()) {
-                    execute(createMessage(chatId, "Вы написали: *${update.message.text}*"))
+                    execute(
+                        createMessage(
+                            chatId,
+                            "${messageService.getMessage("sk_bot.youWrote")} <b>${update.message.text}</b>"
+                        )
+                    )
                     //Если просто фото (надо проверить на наличие заголовка)
                 } else if (update.message.hasPhoto() && update.message.mediaGroupId == null) {
                     val listPhotos = listOf(
@@ -184,7 +189,7 @@ class SK_Bot(
                     if (update.message.caption != null) mapMessageUser[userId]?.text = update.message.caption!!
                     mapMessageUser[userId]?.listPhoto = listPhoto
                 } else {
-                    execute(createMessage(chatId, "Я понимаю только текст!"))
+                    execute(createMessage(chatId, messageService.getMessage("sk_bot.onlyUnderstandText")))
                     execute(SendMediaGroup())
                 }
             }
@@ -223,7 +228,7 @@ class SK_Bot(
                             listPhoto = emptyList()
                         )
                         //                      myMessage.fromHandler = ""
-                        when (callbackArguments[1]) {
+                        when (callbackArguments[0]) {
                             CreatePostHandlerName.CREATE_POST_ABOUT_CRYPTO.text -> mapMessageUser[userId]?.fromHandler =
                                 CreatePostHandlerName.CREATE_POST_ABOUT_CRYPTO.text
 
@@ -265,13 +270,23 @@ class SK_Bot(
                                 CreatePostHandlerName.DAILY_TASKS_IN_GAMES.text -> {
                                     val dto = gameLinkService.getByName(callbackArguments[1])
                                     mapMessageUser[userId]?.link =
-                                        "<a href=\"${dto.link}\">${dto.name}</a> - начни играть прямо сейчас!!!"
+                                        messageService.getMessage(
+                                            "sk_bot.startPlayingRightNow.regexp",
+                                            dto.link,
+                                            dto.name
+                                        )
                                 }
 
                                 CreatePostHandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> {
                                     val dto = exchangeLinkService.getByName(callbackArguments[1])
                                     mapMessageUser[userId]?.link =
-                                        "<a href=\"${dto.link}\">${dto.name}</a> - регистрируйся прямо сейчас, или введи мой реферальный код <b>${dto.code}</b>, и получай крутой бонус по моей реферальной ссылке!!!"
+                                        messageService.getMessage(
+                                            "sk_bot.registerOnExchangeRightNow.regexp",
+                                            dto.link,
+                                            dto.name,
+                                            dto.code
+                                        )
+                                    //                                    "<a href=\"${dto.link}\">${dto.name}</a> - регистрируйся прямо сейчас, или введи мой реферальный код <b>${dto.code}</b>, и получай крутой бонус по моей реферальной ссылке!!!"
                                 }
                             }
                         }
@@ -279,11 +294,19 @@ class SK_Bot(
                     }
 
                     CreatePostHandlerName.MESSAGE_SKETCH.text -> {
-                        mapMessageUser[userId]?.title = "<a href=\"https://t.me/DefiSKcrypto\"><b>SKcrypto</b></a>"
+                        mapMessageUser[userId]?.title = messageService.getMessage("sk_bot.titleGroup")
                         mapMessageUser[userId]?.socialLink = ""
                         val dto = socialMediaLinkService.getAll()
-                        dto.forEach { mapMessageUser[userId]?.socialLink += "<a href=\"${it.link}\">${it.name}</a> " }
-
+                        dto.forEach {
+                            mapMessageUser[userId]?.socialLink += "${
+                                messageService.getMessage(
+                                    "sk_bot.socialLink.regexp",
+                                    it.link,
+                                    it.name
+                                )
+                            } "
+                            //                       "<a href=\"${it.link}\">${it.name}</a> " }
+                        }
                     }
 
                     ////////////////////////////////////////////////////////////////////

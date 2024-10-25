@@ -8,7 +8,7 @@ fun getRowsOfButton(
     var listNames = ArrayList<List<Pair<String, String>>>()
     if (names.size <= 3) listNames.addAll(getOneRowsOfButtons(names, callbackNext, callbackBack))
     else if (names.size in 4..8) listNames.addAll(getTwoRowsOfButtons(names, callbackNext, callbackBack))
-    else if (names.size >= 9) listNames.addAll(getThreeRowsOfButtons(names, callbackNext, callbackBack))
+    else if (names.size > 8) listNames.addAll(getThreeRowsOfButtons(names, callbackNext, callbackBack))
     return listNames
 }
 

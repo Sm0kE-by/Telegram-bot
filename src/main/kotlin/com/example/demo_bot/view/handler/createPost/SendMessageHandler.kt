@@ -1,9 +1,10 @@
 package com.example.demo_bot.view.handler.createPost
 
-import com.example.demo_bot.service.interfaces.SocialMediaLinkService
+import com.example.demo_bot.service.MessageService
 import com.example.demo_bot.view.model.enums.CreatePostHandlerName
 import com.example.demo_bot.util.*
 import com.example.demo_bot.view.model.MessageUser
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
@@ -14,21 +15,21 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
 class SendMessageHandler(
-    private val socialMediaLinkService: SocialMediaLinkService,
+    private val messageService: MessageService,
+    @Value("\${chatId.group}")
+    private val chatIdSend: String
 ) : CreatePostCallbackHandler {
+
 
     override val name: CreatePostHandlerName = CreatePostHandlerName.SEND_MESSAGE
 
     val callbackBack = CreatePostHandlerName.START_HANDLER.text
-    val socialLink = socialMediaLinkService.getAll()
 
     override fun myProcessCallbackData(
         absSender: AbsSender,
         chatId: String,
         message: MessageUser,
     ) {
-        val chatIdSend = "-1002115452577"
-
         if (message.text.isNotEmpty() && message.listPhoto.isEmpty()) {
             absSender.execute(
                 sendMessage(
@@ -67,9 +68,9 @@ class SendMessageHandler(
             absSender.execute(
                 createTextDialogMenu(
                     chatId,
-                    "Сообщение отправлено",
+                    messageService.getMessage("createPost.askSendMessageHandler"),
                     listOf(
-                        listOf("$callbackBack|back" to "Готово"),
+                        listOf("$callbackBack|back" to messageService.getMessage("button.Done")),
                     ),
                 )
             )

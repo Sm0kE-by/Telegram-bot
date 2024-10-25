@@ -1,5 +1,6 @@
 package com.example.demo_bot.view.handler.changeData
 
+import com.example.demo_bot.service.MessageService
 import com.example.demo_bot.service.interfaces.AttributesService
 import com.example.demo_bot.service.interfaces.ExchangeLinkService
 import com.example.demo_bot.service.interfaces.GameLinkService
@@ -11,12 +12,13 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.bots.AbsSender
 
 @Component
-class ChangeMenuCallbackHandler(
+class ChangeMenuHandler(
     private val attributesService: AttributesService,
     private val exchangeLinkService: ExchangeLinkService,
     private val gameLinkService: GameLinkService,
     private val socialMediaLinkService: SocialMediaLinkService,
-) : ChangeDataCallbackHandler {
+    private val messageService: MessageService
+) : ChangeDataHandler {
 
     override val name: ChangeDataHandlerName = ChangeDataHandlerName.CHANGE_MENU
 
@@ -28,7 +30,7 @@ class ChangeMenuCallbackHandler(
         absSender.execute(
             createTextDialogMenu(
                 chatId,
-                "Выберите запись для редактирования",
+                messageService.getMessage("changeDate.askChangeMenuHandler"),
                 getPresentationText(changeDataModel, callbackNext, callbackBack),
             )
         )
