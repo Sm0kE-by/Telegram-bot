@@ -1,0 +1,32 @@
+volumes:
+  sk_bot:
+
+services:
+  tg_bot:
+    image: postgres:17
+    restart: always
+    container_name: postgres_sk_bot
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "5290768"
+      POSTGRES_DB: "tg_bot"
+    volumes:
+      - sk_bot:/var/lib/postgresql/data
+
+  app:
+    restart: always
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - tg_bot
+    #container_name: TelegramBotDockerTmpl
+   # image: telegram_bot_docker_tmpl
+    environment:
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://tg_bot:5432/tg_bot'
+      JAVA_OPTS: 'Xmx512m'
+  #  volumes:
+   #   - ./logs:/~/TelegramBotDockerTmpl/logs
+

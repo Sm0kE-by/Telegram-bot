@@ -16,17 +16,6 @@ spring:
         temp:
           use_jdbc_metadata_defaults: false
 
-
-attributesBot:
-  youtube_attribute: YouTube
-  tiktok_attribute: TikTok
-  instagram_attribute: Instagram
-  telegraph_attribute: Telegraph
-  youtube: (https://www.youtube.com/)
-  tiktok: (https://www.tiktok.com/explore)
-  instagram: (https://www.instagram.com/)
-  telegraph: (https://telegra.ph/)
-
 chatId:
   group: -1002115452577
 

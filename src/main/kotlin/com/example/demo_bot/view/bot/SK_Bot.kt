@@ -275,6 +275,13 @@ class SK_Bot(
                                             dto.link,
                                             dto.name
                                         )
+                                    if (dto.clanLink.isNotEmpty()) mapMessageUser[userId]?.link += "\n${
+                                        messageService.getMessage(
+                                            "sk_bot.joinOurClan.regexp",
+                                            dto.clanLink,
+                                            messageService.getMessage("sk_bot.clan")
+                                        )
+                                    }"
                                 }
 
                                 CreatePostHandlerName.NEW_EVENT_ON_CRYPTO_EXCHANGE.text -> {
@@ -305,7 +312,6 @@ class SK_Bot(
                                     it.name
                                 )
                             } "
-                            //                       "<a href=\"${it.link}\">${it.name}</a> " }
                         }
                     }
 
@@ -390,8 +396,9 @@ class SK_Bot(
         userName: String
     ): Boolean {
         var result = false
-        if (mapMessageUser.containsKey(userId) && mapChangeData.containsKey(userId)) result = true
-        else if (userService.searchByUserById(userId)) result = true
+//        if (mapMessageUser.containsKey(userId) && mapChangeData.containsKey(userId)) result = true
+//        else
+        if (userService.searchByUserById(userId)) result = true
         else if (userName == "KIBAB177" || userName == "Smoke_by") {
             val userDto = UserDto(
                 id = userId,
@@ -400,8 +407,8 @@ class SK_Bot(
                 userName = userName
             )
             userService.create(userDto)
-            mapMessageUser[userId] = MessageUser()
-            mapChangeData[userId] = ChangeDataModel()
+            //     mapMessageUser[userId] = MessageUser()
+            //     mapChangeData[userId] = ChangeDataModel()
             result = true
         }
         return result

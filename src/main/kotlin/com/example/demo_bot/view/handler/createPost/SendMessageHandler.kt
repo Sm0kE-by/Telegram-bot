@@ -32,9 +32,9 @@ class SendMessageHandler(
     ) {
         if (message.text.isNotEmpty() && message.listPhoto.isEmpty()) {
             absSender.execute(
-                sendMessage(
+                createMessage(
                     chatIdSend,
-                    message,
+                    message.text,
                 )
             )
         } else if (message.listPhoto.isNotEmpty()) {

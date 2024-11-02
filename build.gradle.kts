@@ -4,6 +4,8 @@ plugins {
 	kotlin("jvm") version "1.9.24"
 	kotlin("plugin.spring") version "1.9.24"
 	kotlin("plugin.jpa") version "1.9.24"
+	//new
+	application
 }
 
 group = "com.example"
@@ -38,7 +40,11 @@ dependencies {
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
-
+//new
+application {
+	// Входная точка
+	mainClass.set("com.example.demo_bot.BotApplicationKt")
+}
 kotlin {
 	compilerOptions {
 		freeCompilerArgs.addAll("-Xjsr305=strict")
